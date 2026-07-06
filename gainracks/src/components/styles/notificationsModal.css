@@ -1,0 +1,126 @@
+/* Overlay del modal - cubre toda la pantalla */
+.notifications-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Contenedor del modal */
+.notifications-modal-content {
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 900px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Header del modal */
+.notifications-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #333;
+}
+
+.notifications-header h3 {
+  margin: 0;
+  color: #fff;
+  font-size: 1.5rem;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.close-btn:hover {
+  color: #2F00FF;
+}
+
+/* Contenedor de la tabla con scroll */
+.notifications-table-wrap {
+  overflow-y: auto;
+  flex: 1;
+  padding: 20px;
+}
+
+/* Estilos de la tabla */
+.notifications-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #fff;
+}
+
+.notifications-table th {
+  background-color: #0f0f0f;
+  padding: 12px;
+  text-align: left;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.notifications-table td {
+  padding: 12px;
+  border-bottom: 1px solid #333;
+}
+
+.notifications-table tr:hover {
+  background-color: #252525;
+}
+
+/* Footer con botón refrescar */
+.notifications-footer {
+  padding: 15px 20px;
+  border-top: 1px solid #333;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-refresh {
+  background-color: #2F00FF;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+.btn-refresh:hover {
+  background-color: #2500cc;
+}
+
+/* Estados de carga y error */
+.notifications-modal-content p {
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+}
+
+.error {
+  color: #ff4444;
+}

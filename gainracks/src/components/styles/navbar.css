@@ -1,0 +1,63 @@
+  body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background-color: #141414;
+  }
+
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1e1e1e;
+    padding: 10px 20px;
+  }
+
+  .brand-logo a {
+    -webkit-text-stroke: 1px #2F00FF;
+    color: #1e1e1e;
+    font-size: 36px;
+    text-decoration: none;
+    font-weight: bold;
+    font-style: normal;
+    margin-left: 40px;
+    cursor: pointer;
+  }
+
+  .auth-buttons #login,
+  .auth-buttons #register {
+    background-color: #1e1e1e;
+    color: #2F00FF;
+    border: 2px solid #2F00FF;
+    margin-left: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: "Poppins", system-ui;
+  }
+
+  .auth-buttons #login:hover,
+  .auth-buttons #register:hover{
+    transition: color 0.1s linear 0.05s;
+    transition: background-color 0.1s;
+    background-color: #2F00FF;
+    color: #ffffff;
+  }
+
+  .brand-logo a:hover {
+    transition: color 0.1s linear 0.05s;
+    color: #2F00FF;
+  }
+
+  .auth-buttons {
+    margin-right: 40px;
+  }
+
+.estado-logeado {
+  font-weight: bold;
+  padding: 8px;
+  cursor: pointer; /* 👈 esto hace que aparezca el puntero */
+}
+
+.notificacion-img {
+  width: 24px;
+  height: 24px;
+}

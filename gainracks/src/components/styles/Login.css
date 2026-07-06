@@ -1,0 +1,97 @@
+body {
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.login-box {
+  width: 400px;
+  text-align: center;
+}
+
+h1 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 25px;
+  line-height: 1.6;
+}
+
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  background: transparent;
+  border: 1px solid #444;
+  color: #ccc;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 3px;
+  font-size: 0.9rem;
+}
+
+input:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.checkbox {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #888;
+  font-size: 0.8rem;
+  margin-bottom: 25px;
+}
+
+.checkbox input {
+  margin-right: 5px;
+  accent-color: #3b82f6;
+}
+
+.btn-siguiente {
+  width: 100%;
+  background: transparent;
+  border: 1px solid #3b82f6;
+  color: #3b82f6;
+  padding: 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.btn-siguiente:hover {
+  background-color: #3b82f6;
+  color: #fff;
+}
+
+.registro {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  font-size: 0.85rem;
+}
+
+.registro span {
+  color: #888;
+}
+
+.registrar-link {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.registrar-link:hover {
+  text-decoration: underline;
+}

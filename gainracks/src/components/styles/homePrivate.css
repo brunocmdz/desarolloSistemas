@@ -1,0 +1,194 @@
+/* Estilos encapsulados para HomePrivate */
+.home-private-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px 0;
+}
+
+/* Secciones de archivo */
+.home-private-section {
+  background-color: #262876;
+  width: 85%;
+  max-width: 950px;
+  min-height: 200px;
+  margin: 50px 0;
+  padding: 40px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Sección de acciones */
+.home-private-actions {
+  background-color: #262876;
+  width: 85%;
+  max-width: 950px;
+  padding: 30px;
+  margin: 50px 0;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+/* Botones internos */
+.home-private-btn {
+  background-color: #141414;
+  padding: 15px 32px;
+  margin: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  color: white;
+}
+
+.home-private-btn:hover {
+  background-color: #333;
+}
+
+/* Texto de arrastre */
+.home-private-drop p {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #ccc;
+}
+
+/* Encabezados */
+.home-private-section h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: white;
+}
+
+/* Sección de subida de archivo */
+.file-upload-section {
+  width: 100%;
+  margin-top: 30px;
+}
+
+.file-upload-section h3 {
+  color: white;
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+.file-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.real-file-input {
+  display: none;
+}
+
+.file-label {
+  background-color: #141414;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 15px;
+}
+
+.file-label:hover {
+  background-color: #2F00FF;
+}
+
+.file-name {
+  color: white;
+  font-size: 14px;
+  padding: 8px 16px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.upload-btn {
+  background-color: #2F00FF;
+  color: white;
+  padding: 12px 32px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.upload-btn:hover {
+  background-color: #1d0975;
+}
+
+.upload-btn:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+}
+
+/* Select de plantilla */
+.home-private-select {
+  background-color: #141414;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  min-width: 300px;
+  transition: background-color 0.3s ease;
+}
+
+.home-private-select:hover {
+  background-color: #1a1a1a;
+}
+
+.home-private-select option {
+  background-color: #141414;
+  color: white;
+}
+
+/* Tabla de records */
+.records-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 20px;
+}
+
+.records-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: white;
+}
+
+.records-table th {
+  background-color: #141414;
+  padding: 12px;
+  text-align: left;
+  font-weight: bold;
+}
+
+.records-table td {
+  padding: 12px;
+}
+
+.records-table tr:hover {
+  background-color: rgba(47, 0, 255, 0.1);
+}
+
+.content-cell {
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

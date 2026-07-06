@@ -1,0 +1,254 @@
+
+/* Admin users table */
+.admin-users-table {
+    width: 80%;
+    margin: 0 auto;
+    padding: 50px 0;
+    table-layout: fixed; /* mantiene columnas alineadas */
+}
+
+.admin-users-table th,
+.admin-users-table td {
+    padding: 12px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    text-align: center;
+    box-sizing: border-box;
+    color: white;
+}
+
+.admin-users-table th {
+    border-bottom: 2px solid rgba(255,255,255,0.08);
+    font-weight: 600;
+}
+
+/* Opcional: define anchos por columna si quieres (requiere <colgroup> en el HTML para ser efectivo) */
+.admin-users-table col:nth-child(1) { width: 30%; }
+.admin-users-table col:nth-child(2) { width: 40%; }
+.admin-users-table col:nth-child(3) { width: 30%; }
+
+/* ===== Plantillas: estilos (tema oscuro) ===== */
+.templates-section {
+    width: 90%;
+    max-width: 1100px;
+    margin: 30px auto;
+    border-radius: 10px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.templates-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    padding-bottom: 16px;
+}
+
+.templates-form .field {
+    flex: 1 1 200px;
+    min-width: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* keep inputs aligned at the same vertical level */
+}
+
+.templates-form label {
+    font-size: 0.85rem;
+    color: white;
+    margin-bottom: 6px;
+}
+
+.templates-form input[type="text"],
+.templates-form select,
+.templates-form textarea {
+    background: #1a1a1a;
+    border: 1px solid rgba(255,255,255,0.04);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: white;
+    outline: none;
+    transition: box-shadow .12s, border-color .12s;
+    height: 36px;
+    box-sizing: border-box;
+}
+
+.templates-form input[type="file"] {
+    padding: 6px 8px;
+    height: 36px;
+    min-width: 200px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Style the file button (WebKit/Blink) */
+.templates-form input[type="file"]::-webkit-file-upload-button {
+    background: rgba(255,255,255,0.04);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 6px 10px;
+    margin-right: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+
+
+/* Custom file control (hide native input, show button + filename) */
+.file-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    flex-wrap: nowrap; /* prevent children from wrapping */
+}
+
+.real-file-input {
+    /* keep the native input for accessibility but visually hidden */
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0 0 0 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+    opacity: 0 !important;
+}
+
+.file-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    height: 36px;
+    line-height: 36px;
+    border-radius: 6px;
+    background: #2b2b2b; /* flat solid color */
+    border: none; /* flat look */
+    color: white;
+    cursor: pointer;
+    font-size: 0.95rem;
+    white-space: nowrap; /* prevent wrapping on the button */
+    min-width: 140px; /* ensure label fits on one line */
+    box-sizing: border-box;
+    justify-content: center;
+}
+
+.file-name {
+    color: white;
+    font-size: 0.9rem;
+    flex: 1 1 auto;
+    max-width: calc(100% - 160px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; /* show single line with ellipsis */
+    margin-left: 6px;
+}
+
+/* ensure the form fields align: put file-control on same baseline as other inputs */
+.file-field { display: flex; flex-direction: column; }
+.file-field .file-control { margin-top: 4px; }
+.file-field { flex: 1 1 320px; min-width: 260px; }
+
+.templates-form input:focus,
+.templates-form textarea:focus,
+.templates-form select:focus {
+    border-color: rgba(255, 255, 255, 0.9);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: transform .06s ease, box-shadow .08s ease;
+}
+
+.btn:active { transform: translateY(1px); }
+
+.btn-primary {
+    background:#1a1a1a;
+    color: #fff;
+}
+
+.btn-ghost {
+    background: #1a1a1a;
+    border: 1px solid rgba(255,255,255,0.04);
+    color: white;
+}
+
+.templates-table {
+    width: 100%;
+    margin-top: 14px;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #1a1a1a;
+}
+
+.templates-table thead {
+    background: #1d1c1c;
+}
+
+.templates-table th,
+.templates-table td {
+    padding: 12px 14px;
+    text-align: left;
+    font-size: 0.95rem;
+    vertical-align: middle;
+    color: white;
+}
+.templates-table th { color: white; font-weight: 700; }
+
+.template-content {
+    max-width: 420px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: white;
+    font-size: 0.86rem;
+    line-height: 1.25;
+    max-height: 6.5em;
+    overflow: hidden;
+    position: relative;
+}
+
+.template-content:after {
+    /* remove gradient overlay for flat look; keep a subtle fade using transparency */
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 40px;
+    height: 2em;
+}
+
+.template-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+/* Align action buttons vertically and give consistent sizing */
+.template-actions { align-items: center; }
+.templates-table .btn { padding: 6px 12px; min-height: 36px; border-radius: 6px; }
+.templates-table td:last-child { text-align: right; }
+
+@media (max-width: 820px) {
+    .templates-form { flex-direction: column; align-items: stretch; }
+    .templates-table, .templates-table thead, .templates-table tbody, .templates-table th, .templates-table td, .templates-table tr { display: block; }
+    .templates-table tr { margin-bottom: 12px; border-radius: 8px; background: #0e1318; box-shadow: 0 6px 18px rgba(0,0,0,0.5); padding: 12px; }
+    .templates-table th { display: none; }
+    .templates-table td { display: flex; justify-content: space-between; padding: 8px 12px; border-bottom: none; color: white; align-items: center; }
+    .template-content { max-height: none; }
+    .template-actions { justify-content: flex-start; margin-left: 8px; }
+}
+
+h2{
+    text-align: center;
+    color: #2F00FF;
+}

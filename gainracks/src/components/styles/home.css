@@ -1,0 +1,62 @@
+* {
+  color: white;
+}
+/* Alinea el texto a la derecha dentro del contenedor. */
+.text-container {
+  text-align: right;
+}
+/* Aplica el mismo estilo a ambos contenedores usando flexbox para centrar los elementos y el texto,
+  con un ancho del 85% del contenedor disponible, una altura mínima de 500px, y un fondo rojo oscuro.
+  También añade márgenes superior e inferior de 150px. */
+
+.card1 {
+  display: flex;
+  margin: auto;
+  width: 85%;
+  align-items: center;
+  text-align: center;
+  max-width: 950px;
+  height: auto;
+  min-height: 500px;
+  background-color: #262876;
+  margin-top: 150px;
+  margin-bottom: 150px;
+}
+
+.card2 {
+  display: flex;
+  margin: auto;
+  width: 85%;
+  align-items: center;
+  text-align: center;
+  max-width: 950px;
+  height: auto;
+  min-height: 500px;
+  background-color: #262876;
+  margin-top: 150px;
+  margin-bottom: 150px;
+}
+/* Configura el ancho completo de la ventana del navegador y una altura fija para las imágenes,
+  asegurando que no se estiren más allá de sus dimensiones máximas. */
+.img img {
+  min-height: 500px;
+  width: 100vw;
+  height: 500px;
+  max-height: 100%;
+  max-width: 100%;
+}
+/* Establece el estilo del botón, 
+incluyendo color de fondo negro, padding, 
+formato del texto, y presentación como un bloque en línea. */
+#Button {
+  background-color: #141414;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+/* Aplica padding a los párrafos, pero falta la unidad de medida para que el padding tenga efecto. */
+p {
+  padding: 30px;
+}
