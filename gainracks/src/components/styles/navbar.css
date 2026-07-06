@@ -54,7 +54,7 @@
 .estado-logeado {
   font-weight: bold;
   padding: 8px;
-  cursor: pointer; /* 👈 esto hace que aparezca el puntero */
+  cursor: pointer; 
 }
 
 .notificacion-img {
