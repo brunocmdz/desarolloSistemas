@@ -13,7 +13,7 @@
   }
 
   .brand-logo a {
-    -webkit-text-stroke: 1px #2F00FF;
+    -webkit-text-stroke: 1px #b80f0f;
     color: #1e1e1e;
     font-size: 36px;
     text-decoration: none;
@@ -26,8 +26,8 @@
   .auth-buttons #login,
   .auth-buttons #register {
     background-color: #1e1e1e;
-    color: #2F00FF;
-    border: 2px solid #2F00FF;
+    color: #b80f0f;
+    border: 2px solid #b80f0f;
     margin-left: 10px;
     cursor: pointer;
     font-size: 16px;
@@ -38,13 +38,13 @@
   .auth-buttons #register:hover{
     transition: color 0.1s linear 0.05s;
     transition: background-color 0.1s;
-    background-color: #2F00FF;
+    background-color: #b80f0f;
     color: #ffffff;
   }
 
   .brand-logo a:hover {
     transition: color 0.1s linear 0.05s;
-    color: #2F00FF;
+    color: #b80f0f;
   }
 
   .auth-buttons {

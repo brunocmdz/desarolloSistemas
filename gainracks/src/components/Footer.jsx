@@ -18,8 +18,8 @@ function Footer() {
             </div>
             <div className="footer-warning">
                 <p>
-                    Pagina desarrollada en la Escuela Tecnica N°26 “Confederacion Suiza” <br/>
-                    Integrantes: Bruno Rojas - Shandee Incapuiño - Marcos Ortiz - Morales Victor
+                    DISCLAIMER: NUESTRO SISTEMA NO SE HACE CARGO DE LESIONES MEDICAS
+                    IDEALMENTE SE DEBE HACER UNA DIETA” <br/>
                 </p>
             </div>
         </div>

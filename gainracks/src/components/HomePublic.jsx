@@ -1,40 +1,40 @@
 import './styles/home.css';
-import img from '../assets/imagenmuimportante.png'
-function HomePublic({ onRegisterClick}) {
-  return (
-    <div className="container">
-        <div className="card1">
-        <div className="text-container">
-            <p>
-            Con V-S-M-B comparar archivos nunca fue tan fácil: descubrí las diferencias,
-             detectá los cambios y mantené tus proyectos siempre organizados.
-            Empezá ahora y dejá que V-S-M-B haga el trabajo pesado por vos.
-            Tu tiempo vale, y nosotros te ayudamos a aprovecharlo al máximo.
-            </p>
-        </div>
+import img from '../assets/gymfoto.jpg'
 
-        <div className="img-container">
-            <div className="img"><img src={img} /></div>
-        </div>
-        </div>
+function HomePublic({ onRegisterClick }) {
+    return (
+        <div className="home-public-root">
+            <section className="hero">
+                <div className="hero-text">
+                    <div className="card-red">
+                        <h3>¡Transformá tu rutina con GYM APP!</h3>
+                        <p>
+                            Accedé a entrenamientos personalizados, seguí tu progreso en tiempo real y alcanzá tus objetivos fitness desde cualquier lugar.
+                            Desde rutinas de fuerza y musculación hasta cardio y planes de nutrición, todo en una sola plataforma diseñada para potenciar tu rendimiento.
+                        </p>
+                        <p>
+                            Sumate hoy a la comunidad de personas que decidieron cambiar su estilo de vida y llevá tu entrenamiento al siguiente nivel.
+                        </p>
+                    </div>
+                </div>
+                <div className="hero-image">
+                    <img src={img} alt="hero" />
+                </div>
+            </section>
 
-        <div className="card2">
-        <div className="container">
-            <div className="text-container2">
-            <p>
-                ¿Tenés varios archivos parecidos y no sabés cuál es la versión más reciente o cuál cambió?
-                Comparador de Archivos es la herramienta ideal para detectar diferencias entre documentos,
-                carpetas o códigos de manera rápida y precisa.
-                Con una interfaz simple e intuitiva, 
-                la aplicación analiza el contenido línea por línea, resalta los cambios y te permite visualizar exactamente qué fue modificado,
-                añadido o eliminado. Ya sea que trabajes con texto, código fuente, reportes o archivos de configuración,
-                podrás ahorrar tiempo y evitar errores al comparar versiones.
-            </p>
-            </div>
-            <button onClick={onRegisterClick}> Descargar </button>
+            <section className="cta">
+                <div className="cta-inner">
+                    <div className="cta-content">
+                        <p className="cta-text">
+                            Con una interfaz moderna, seguimiento de resultados y desafíos motivadores, GYM APP te acompaña en cada repetición para que entrenes de
+                            manera más inteligente y efectiva. Sumate hoy a la comunidad de personas que decidieron cambiar su estilo de vida y llevá tu entrenamiento al siguiente nivel.
+                        </p>
+                        <button className="cta-btn" onClick={onRegisterClick}>REGISTRATE</button>
+                    </div>
+                </div>
+            </section>
         </div>
-        </div>
-    </div>
-  )}
+    )
+}
 
-export default HomePublic;  
+export default HomePublic;

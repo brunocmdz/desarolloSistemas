@@ -57,7 +57,7 @@ body {
 }
 
 .form-box input:focus {
-  border-color: #6a6aff;
+  border-color: #b80f0f;
   outline: none;
 }
 
@@ -65,9 +65,9 @@ body {
 .form-box button {
   margin-top: 10px;
   padding: 12px;
-  border: 1px solid #6a6aff;
+  border: 1px solid #b80f0f;
   background-color: transparent;
-  color: #6a6aff;
+  color: #b80f0f;
   font-weight: 500;
   font-size: 15px;
   border-radius: 2px;
@@ -76,8 +76,8 @@ body {
 }
 
 .form-box button:hover {
-  background-color: #6a6aff;
-  color: #0b0b0b;
+  background-color: #b80f0f;
+  color: #fff;
 }
 
 
@@ -88,7 +88,7 @@ body {
 }
 
 .form-terms a {
-  color: #6a6aff;
+  color: #b80f0f;
   text-decoration: none;
 }
 

@@ -9,54 +9,35 @@
   con un ancho del 85% del contenedor disponible, una altura mínima de 500px, y un fondo rojo oscuro.
   También añade márgenes superior e inferior de 150px. */
 
-.card1 {
-  display: flex;
-  margin: auto;
-  width: 85%;
-  align-items: center;
-  text-align: center;
-  max-width: 950px;
-  height: auto;
-  min-height: 500px;
-  background-color: #262876;
-  margin-top: 150px;
-  margin-bottom: 150px;
-}
+.home-public-root{font-family: 'Arial', sans-serif; color:#fff; background:#0f0f0f; padding-top:72px}
 
-.card2 {
-  display: flex;
-  margin: auto;
-  width: 85%;
-  align-items: center;
-  text-align: center;
-  max-width: 950px;
-  height: auto;
-  min-height: 500px;
-  background-color: #262876;
-  margin-top: 150px;
-  margin-bottom: 150px;
-}
+.hero{display:flex;align-items:stretch;gap:0;max-width:1100px;margin:40px auto;padding:0 16px;width:100%;height:480px}
+.hero-text{width:48%;display:flex;align-items:center}
+.hero-image{width:52%;display:flex;align-items:stretch}
+.card-red{background:#b80f0f;padding:36px;color:#fff;border-radius:3px;box-shadow:0 2px 0 rgba(0,0,0,0.2);height:100%;display:flex;flex-direction:column;justify-content:center}
+.hero-image img{width:100%;height:100%;object-fit:cover;border-radius:4px}
+.card-red h3{margin:0 0 12px 0;font-size:20px}
+.card-red p{margin:8px 0;line-height:1.5;font-size:14px}
 /* Configura el ancho completo de la ventana del navegador y una altura fija para las imágenes,
   asegurando que no se estiren más allá de sus dimensiones máximas. */
-.img img {
-  min-height: 500px;
-  width: 100vw;
-  height: 500px;
-  max-height: 100%;
-  max-width: 100%;
+.cta{display:flex;justify-content:center;padding:32px 0;margin:28px 0 40px}
+/* Use a matching inner container so CTA aligns with .hero edges */
+.cta-inner{max-width:1100px;margin:0 auto;padding:0 16px;width:100%}
+.cta-content{width:100%;text-align:center;padding:36px 0;background:#b80f0f}
+.cta-content .cta-text{margin:0 auto 22px;max-width:820px;font-size:16px;line-height:1.6;color:#fff;padding:0 24px}
+.cta-btn{background:#141414;color:#fff;padding:10px 22px;border-radius:4px;border:none;cursor:pointer}
+.cta-btn:hover{opacity:0.95}
+
+/* Responsive adjustments */
+@media (max-width: 900px){
+  .hero{flex-direction:column;gap:18px;padding:0 20px}
+  .hero-image img{width:100%;height:320px;max-width:100%}
+  .card-red{max-width:100%;padding:20px}
+  .cta{padding:28px 0}
 }
 /* Establece el estilo del botón, 
 incluyendo color de fondo negro, padding, 
 formato del texto, y presentación como un bloque en línea. */
-#Button {
-  background-color: #141414;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-}
+#Button { display:none }
 /* Aplica padding a los párrafos, pero falta la unidad de medida para que el padding tenga efecto. */
-p {
-  padding: 30px;
-}
+p { padding: 0 }
