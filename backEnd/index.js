@@ -1,3 +1,4 @@
+require('dotenv').config();
 require('./model/user');
 
 const express = require('express');

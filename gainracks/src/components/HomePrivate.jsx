@@ -23,7 +23,6 @@ const MuscleCarousel = ({ title, muscleId }) => {
   useEffect(() => {
     const fetchExercises = async () => {
       try {
-        // Cambiar puerto 5000 por 3000
         const res = await fetch(`http://localhost:3000/api/exercises/${muscleId}`);
         const data = await res.json();
         setExercises(data);
@@ -34,8 +33,8 @@ const MuscleCarousel = ({ title, muscleId }) => {
       }
     };
 
-  fetchExercises();
-}, [muscleId, title]);
+    fetchExercises();
+  }, [muscleId, title]);
 
   const handleScroll = (direction) => {
     if (trackRef.current) {
@@ -62,10 +61,24 @@ const MuscleCarousel = ({ title, muscleId }) => {
             <div className="card">Cargando...</div>
           ) : exercises.length > 0 ? (
             exercises.map((item, index) => (
-              <div key={item.id || index} className="card">
-                {/* Muestra el nombre del ejercicio (soporta propiedad 'name' o 'nombre') */}
+              <div key={item.id || index} className="exercise-card">
+                {item.image ? (
+                  <img
+                    src={item.image}
+                    alt={item.name || 'Ejercicio'}
+                    className="exercise-image"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                ) : (
+                  <div className="exercise-image-placeholder">
+                    Sin imagen
+                  </div>
+                )}
+
                 <span className="exercise-name">
-                  {item.name || item.nombre || 'Ejercicio sin nombre'}
+                  {item.name || 'Ejercicio sin nombre'}
                 </span>
               </div>
             ))
