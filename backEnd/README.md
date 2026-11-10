@@ -12,7 +12,8 @@ La primera cuenta registrada con el correo indicado en `ADMIN_EMAIL` se crea com
 ## Datos persistidos
 
 - `User`: acceso, rol, estado y datos del perfil.
+- `exercises`: catálogo de movimientos por grupo muscular; se completa al iniciar la API.
 - `routines`: rutinas y ejercicios asociados al usuario propietario.
-- `workout_sessions`: entrenamientos completados, duración, notas y copia de los ejercicios realizados.
+- `workout_sessions`: entrenamientos completados, duración, notas y repeticiones/peso real registrado en cada serie.
 
-Al iniciar, Sequelize sincroniza los modelos con PostgreSQL. Las operaciones de perfil, rutinas e historial requieren el token Bearer devuelto por el login; el panel y la gestión de usuarios requieren además el rol de administrador.
+Al iniciar, Sequelize sincroniza los modelos con PostgreSQL y carga/actualiza el catálogo inicial de ejercicios. Las operaciones de perfil, rutinas e historial requieren el token Bearer devuelto por el login; el panel y la gestión de usuarios requieren además el rol de administrador.

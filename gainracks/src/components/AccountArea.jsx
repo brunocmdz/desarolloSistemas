@@ -2,7 +2,19 @@ import { useCallback, useEffect, useState } from 'react';
 import './styles/accountArea.css';
 
 const API_URL = 'http://localhost:3000';
-const emptyExercise = () => ({ name: '', muscle: '', sets: 3, reps: 10, weightKg: '' });
+const MUSCLE_LABELS = {
+  pecho: 'Pecho', espalda: 'Espalda', hombros: 'Hombros', abdominales: 'Abdominales',
+  biceps: 'Bíceps', triceps: 'Tríceps', cuadriceps: 'Cuádriceps',
+  isquiotibiales: 'Isquiotibiales', gluteo: 'Glúteos', pantorrilla: 'Pantorrillas', cardio: 'Cardio'
+};
+const emptyExercise = () => ({ exerciseId: '', setsCount: 3, targetReps: 10, targetWeightKg: '' });
+const comparableName = (name) => String(name || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+const formatSessionExercise = (exercise) => {
+  const performance = Array.isArray(exercise.sets)
+    ? exercise.sets.map((set) => `${set.reps ?? set.targetReps} reps${set.weightKg != null ? ` @ ${set.weightKg} kg` : ''}`).join(', ')
+    : `${exercise.sets ?? '?'} × ${exercise.reps ?? '?'} reps`;
+  return `${exercise.name}: ${performance}`;
+};
 
 async function apiRequest(path, options = {}) {
   const response = await fetch(`${API_URL}${path}`, {
@@ -22,7 +34,10 @@ function AccountArea({ section }) {
   const [profile, setProfile] = useState(null);
   const [routines, setRoutines] = useState([]);
   const [history, setHistory] = useState([]);
+  const [exerciseCatalog, setExerciseCatalog] = useState([]);
   const [dashboard, setDashboard] = useState(null);
+  const [activeRoutineId, setActiveRoutineId] = useState(null);
+  const [workoutExercises, setWorkoutExercises] = useState([]);
   const [routineName, setRoutineName] = useState('');
   const [description, setDescription] = useState('');
   const [exercises, setExercises] = useState([emptyExercise()]);
@@ -32,13 +47,17 @@ function AccountArea({ section }) {
 
   const refresh = useCallback(async () => {
     try {
-      const [profileData, routineData, historyData] = await Promise.all([
-        apiRequest('/api/profile'), apiRequest('/api/routines'), apiRequest('/api/history')
+      const [profileData, routineData, historyData, catalogData] = await Promise.all([
+        apiRequest('/api/profile'), apiRequest('/api/routines'), apiRequest('/api/history'), apiRequest('/api/exercises')
       ]);
       setError('');
       setProfile(profileData);
-      setRoutines(routineData);
+      setRoutines(routineData.map((routine) => ({
+        ...routine,
+        exercises: Array.isArray(routine.exercises) ? routine.exercises : []
+      })));
       setHistory(historyData);
+      setExerciseCatalog(catalogData);
       if (section === 'admin' && localStorage.getItem('isAdmin') === 'true') {
         setDashboard(await apiRequest('/api/admin/dashboard'));
       }
@@ -70,10 +89,10 @@ function AccountArea({ section }) {
           name: routineName,
           description,
           exercises: exercises.map((exercise) => ({
-            ...exercise,
-            sets: Number(exercise.sets),
-            reps: Number(exercise.reps),
-            weightKg: exercise.weightKg === '' ? null : Number(exercise.weightKg)
+            exerciseId: exercise.exerciseId,
+            setsCount: Number(exercise.setsCount),
+            targetReps: Number(exercise.targetReps),
+            targetWeightKg: exercise.targetWeightKg === '' ? null : Number(exercise.targetWeightKg)
           }))
         })
       });
@@ -89,6 +108,43 @@ function AccountArea({ section }) {
     }
   };
 
+  const startWorkout = (routine) => {
+    setActiveRoutineId(routine.id);
+    setWorkoutExercises(routine.exercises.map((exercise) => {
+      const previousSession = history.find((session) => session.exercises?.some((performed) =>
+        performed.exerciseId === exercise.exerciseId || comparableName(performed.name) === comparableName(exercise.name))
+      );
+      const previousExercise = previousSession?.exercises.find((performed) =>
+        performed.exerciseId === exercise.exerciseId || comparableName(performed.name) === comparableName(exercise.name)
+      );
+      return {
+        exerciseId: exercise.exerciseId,
+        name: exercise.name,
+        muscle: exercise.muscle,
+        sets: exercise.sets.map((set, index) => {
+          const previousSet = previousExercise?.sets?.[index] || (previousExercise?.sets ? null : previousExercise);
+          return {
+            targetReps: set.targetReps,
+            targetWeightKg: set.targetWeightKg,
+            previousReps: previousSet?.reps ?? null,
+            previousWeightKg: previousSet?.weightKg ?? null,
+            reps: '',
+            weightKg: previousSet?.weightKg ?? set.targetWeightKg ?? ''
+          };
+        })
+      };
+    }));
+    setMessage('');
+    setError('');
+  };
+
+  const updateWorkoutSet = (exerciseIndex, setIndex, field, value) => {
+    setWorkoutExercises((current) => current.map((exercise, currentIndex) => currentIndex !== exerciseIndex ? exercise : {
+      ...exercise,
+      sets: exercise.sets.map((set, currentSetIndex) => currentSetIndex !== setIndex ? set : { ...set, [field]: value })
+    }));
+  };
+
   const logWorkout = async (event, routine) => {
     event.preventDefault();
     setError('');
@@ -100,7 +156,14 @@ function AccountArea({ section }) {
         body: JSON.stringify({
           routineId: routine.id,
           durationMinutes: Number(formData.get('durationMinutes')),
-          notes: formData.get('notes')
+          notes: formData.get('notes'),
+          exercises: workoutExercises.map((exercise) => ({
+            exerciseId: exercise.exerciseId,
+            sets: exercise.sets.map((set) => ({
+              reps: Number(set.reps),
+              weightKg: set.weightKg === '' ? null : Number(set.weightKg)
+            }))
+          }))
         })
       });
       setMessage(`Sesión de ${routine.name} registrada en tu historial.`);
@@ -165,12 +228,21 @@ function AccountArea({ section }) {
             <div className="exercise-builder-heading"><h3>Ejercicios</h3><button type="button" className="text-action" onClick={() => setExercises((current) => [...current, emptyExercise()])}>＋ Añadir ejercicio</button></div>
             {exercises.map((exercise, index) => <fieldset className="exercise-builder" key={index}>
               <legend>Ejercicio {index + 1}</legend>
-              <label>Nombre<input required value={exercise.name} onChange={(event) => updateExercise(index, 'name', event.target.value)} placeholder="Press de banca" /></label>
-              <label>Grupo muscular<input value={exercise.muscle} onChange={(event) => updateExercise(index, 'muscle', event.target.value)} placeholder="Pecho" /></label>
+              <label>Ejercicio
+                <select required value={exercise.exerciseId} onChange={(event) => updateExercise(index, 'exerciseId', event.target.value)}>
+                  <option value="">Selecciona un ejercicio</option>
+                  {Object.entries(MUSCLE_LABELS).map(([muscle, label]) => {
+                    const groupExercises = exerciseCatalog.filter((item) => item.muscleGroup === muscle);
+                    return groupExercises.length ? <optgroup label={label} key={muscle}>
+                      {groupExercises.map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}
+                    </optgroup> : null;
+                  })}
+                </select>
+              </label>
               <div className="exercise-numbers">
-                <label>Series<input type="number" min="1" max="30" required value={exercise.sets} onChange={(event) => updateExercise(index, 'sets', event.target.value)} /></label>
-                <label>Reps<input type="number" min="1" max="100" required value={exercise.reps} onChange={(event) => updateExercise(index, 'reps', event.target.value)} /></label>
-                <label>Kg<input type="number" min="0" max="1000" step="0.5" value={exercise.weightKg} onChange={(event) => updateExercise(index, 'weightKg', event.target.value)} placeholder="--" /></label>
+                <label>Series<input type="number" min="1" max="30" required value={exercise.setsCount} onChange={(event) => updateExercise(index, 'setsCount', event.target.value)} /></label>
+                <label>Reps objetivo<input type="number" min="1" max="100" required value={exercise.targetReps} onChange={(event) => updateExercise(index, 'targetReps', event.target.value)} /></label>
+                <label>Kg objetivo<input type="number" min="0" max="1000" step="0.5" value={exercise.targetWeightKg} onChange={(event) => updateExercise(index, 'targetWeightKg', event.target.value)} placeholder="--" /></label>
               </div>
               {exercises.length > 1 && <button type="button" className="remove-exercise" onClick={() => setExercises((current) => current.filter((_, exerciseIndex) => exerciseIndex !== index))}>Quitar ejercicio</button>}
             </fieldset>)}
@@ -181,13 +253,25 @@ function AccountArea({ section }) {
         <section className="account-section">
           <div className="section-title-row"><div><span className="account-eyebrow">TU BIBLIOTECA</span><h2>Rutinas guardadas <span className="count-badge">{routines.length}</span></h2></div></div>
           {routines.length ? <div className="routine-list">{routines.map((routine) => <article className="routine-entry" key={routine.id}>
-            <div className="routine-entry-top"><div><h3>{routine.name}</h3><p>{routine.description || 'Sin descripción'}</p></div></div>
-            <ul>{routine.exercises.map((exercise, index) => <li key={`${routine.id}-${index}`}><span>{exercise.name}</span><span>{exercise.sets} × {exercise.reps}{exercise.weightKg ? ` · ${exercise.weightKg} kg` : ''}</span></li>)}</ul>
-            <form className="workout-log-form" onSubmit={(event) => logWorkout(event, routine)}>
-              <label>Duración (min)<input required name="durationMinutes" type="number" min="1" max="1440" placeholder="Ej. 50" /></label>
-              <label>Notas<input name="notes" maxLength="500" placeholder="Opcional" /></label>
-              <button type="submit" className="primary-action compact-action">Registrar sesión</button>
-            </form>
+            <div className="routine-entry-top"><div><h3>{routine.name}</h3><p>{routine.description || 'Sin descripción'}</p></div><button type="button" className="primary-action compact-action" onClick={() => startWorkout(routine)}>Entrenar</button></div>
+            <ul>{routine.exercises.map((exercise, index) => <li key={`${routine.id}-${index}`}><span>{exercise.name}</span><span>{exercise.sets.length} × {exercise.sets[0]?.targetReps} reps{exercise.sets[0]?.targetWeightKg ? ` · ${exercise.sets[0].targetWeightKg} kg` : ''}</span></li>)}</ul>
+            {activeRoutineId === routine.id && <form className="session-editor" onSubmit={(event) => logWorkout(event, routine)}>
+              {workoutExercises.map((exercise, exerciseIndex) => <fieldset className="session-exercise" key={exercise.exerciseId}>
+                <legend>{exercise.name}</legend>
+                <div className="session-set-head"><span>Serie</span><span>Anterior</span><span>Reps hechas</span><span>Kg</span></div>
+                {exercise.sets.map((set, setIndex) => <div className="session-set" key={`${exercise.exerciseId}-${setIndex}`}>
+                  <span className="session-set-number">{setIndex + 1}<small>Objetivo {set.targetReps}</small></span>
+                  <span className="previous-set">{set.previousReps ? `${set.previousReps} reps · ${set.previousWeightKg ?? '-'} kg` : 'Sin registro'}</span>
+                  <label><span className="visually-hidden">Repeticiones de la serie {setIndex + 1}</span><input required type="number" min="1" max="100" value={set.reps} onChange={(event) => updateWorkoutSet(exerciseIndex, setIndex, 'reps', event.target.value)} /></label>
+                  <label><span className="visually-hidden">Peso de la serie {setIndex + 1}</span><input type="number" min="0" max="1000" step="0.5" value={set.weightKg} onChange={(event) => updateWorkoutSet(exerciseIndex, setIndex, 'weightKg', event.target.value)} placeholder="--" /></label>
+                </div>)}
+              </fieldset>)}
+              <div className="workout-log-form">
+                <label>Duración (min)<input required name="durationMinutes" type="number" min="1" max="1440" placeholder="Ej. 50" /></label>
+                <label>Notas<input name="notes" maxLength="500" placeholder="Opcional" /></label>
+              </div>
+              <div className="session-actions"><button type="button" className="text-action" onClick={() => setActiveRoutineId(null)}>Cancelar</button><button type="submit" className="primary-action">Guardar entrenamiento</button></div>
+            </form>}
           </article>)}</div> : <p className="empty-state">Todavía no tienes rutinas. Crea la primera aquí.</p>}
         </section>
       </div>}
@@ -196,7 +280,7 @@ function AccountArea({ section }) {
         <div className="section-title-row"><div><span className="account-eyebrow">ACTIVIDAD</span><h2>Sesiones completadas</h2></div><span className="count-badge">{history.length}</span></div>
         {history.length ? <div className="history-list">{history.map((session) => <article className="history-entry" key={session.id}>
           <div className="history-date"><strong>{new Date(session.completedAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}</strong><span>{new Date(session.completedAt).toLocaleDateString('es-ES', { year: 'numeric' })}</span></div>
-          <div className="history-details"><h3>{session.routineName}</h3><p>{session.exercises.map((exercise) => exercise.name).join(' · ')}</p></div>
+          <div className="history-details"><h3>{session.routineName}</h3><p>{session.exercises.map(formatSessionExercise).join(' · ')}</p></div>
           <div className="history-duration">{session.durationMinutes ? `${session.durationMinutes} min` : 'Sesión'}<small>{session.exercises.length} ejercicios</small></div>
         </article>)}</div> : <p className="empty-state">Aún no hay sesiones. Registra una desde tus rutinas.</p>}
       </section>}

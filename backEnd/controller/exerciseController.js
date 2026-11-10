@@ -1,9 +1,6 @@
-const getExercisesByMuscle = async (req, res) => {
-  const { muscle } = req.params;
-  const muscleKey = muscle ? muscle.toLowerCase() : 'pecho';
+const Exercise = require('../model/exercise');
 
-  // Base de datos local ampliada con todos los ejercicios solicitados
-  const localExercisesDB = {
+const EXERCISES_BY_MUSCLE = {
     pecho: [
       { id: 'ex-1', name: 'Press de Banca con Barra', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLRGEReFPd-aonfQFPzidg5cvgww3WGJ2NpkP60_pJTg&s=10' },
       { id: 'ex-2', name: 'Press inclinado con Mancuernas', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzoBCcm-qtTTHpCFfw4dPG5R1Wzv_QWeINPBk1rL7lcw&s=10' },
@@ -59,15 +56,47 @@ const getExercisesByMuscle = async (req, res) => {
     cardio: [
       { id: 'ex-20', name: 'Cinta de Correr', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2943De_aN6G20rAg-2MP5NIPji2NyRyyJ3y7LXJMZkA&s=10' }
     ]
-  };
+};
 
+const EXTRA_EXERCISES = [
+  ['ex-36', 'Cruce de Poleas', 'pecho'], ['ex-37', 'Fondos en Paralelas', 'pecho'],
+  ['ex-38', 'Remo en Polea Baja', 'espalda'], ['ex-39', 'Jalón con Agarre Estrecho', 'espalda'], ['ex-40', 'Peso Muerto Convencional', 'espalda'],
+  ['ex-41', 'Face Pull', 'hombros'], ['ex-42', 'Press Arnold', 'hombros'],
+  ['ex-30', 'Bicicleta Abdominal', 'abdominales'], ['ex-31', 'Giros Rusos', 'abdominales'],
+  ['ex-43', 'Plancha', 'abdominales'], ['ex-44', 'Crunch en Polea', 'abdominales'],
+  ['ex-45', 'Curl Inclinado con Mancuernas', 'biceps'],
+  ['ex-46', 'Extensión de Tríceps sobre la Cabeza', 'triceps'], ['ex-47', 'Fondos en Banco', 'triceps'],
+  ['ex-48', 'Extensión de Cuádriceps', 'cuadriceps'], ['ex-49', 'Sentadilla Goblet', 'cuadriceps'],
+  ['ex-50', 'Curl Femoral', 'isquiotibiales'], ['ex-51', 'Buenos Días con Barra', 'isquiotibiales'],
+  ['ex-52', 'Patada de Glúteo en Polea', 'gluteo'], ['ex-53', 'Abducción de Cadera', 'gluteo'],
+  ['ex-54', 'Elevación de Talones Sentado', 'pantorrilla'],
+  ['ex-55', 'Bicicleta Estática', 'cardio'], ['ex-56', 'Máquina de Remo', 'cardio']
+].map(([id, name, muscleGroup]) => ({ id, name, muscleGroup, image: null }));
+
+const getExerciseCatalog = () => [
+  ...Object.entries(EXERCISES_BY_MUSCLE).flatMap(([muscleGroup, exercises]) =>
+    exercises.map(({ id, name, image }) => ({ id, name, image, muscleGroup }))
+  ),
+  ...EXTRA_EXERCISES
+];
+
+const getExercises = async (_req, res, next) => {
   try {
-    const exercises = localExercisesDB[muscleKey] || localExercisesDB['pecho'];
-    return res.status(200).json(exercises);
+    return res.json(await Exercise.findAll({ order: [['muscleGroup', 'ASC'], ['name', 'ASC']] }));
   } catch (error) {
-    console.error(`Error al obtener ejercicios de ${muscle}:`, error);
-    return res.status(200).json([]);
+    return next(error);
   }
 };
 
-module.exports = { getExercisesByMuscle };
+const getExercisesByMuscle = async (req, res, next) => {
+  try {
+    return res.json(await Exercise.findAll({
+      where: { muscleGroup: req.params.muscle.toLowerCase() },
+      order: [['name', 'ASC']]
+    }));
+  } catch (error) {
+    return next(error);
+  }
+};
+
+module.exports = { getExercises, getExercisesByMuscle, getExerciseCatalog };

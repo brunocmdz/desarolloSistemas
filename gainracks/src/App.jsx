@@ -5,6 +5,7 @@ import HomePrivate from './components/HomePrivate';
 import Login from './components/Login';
 import Register from './components/Register';
 import AccountArea from './components/AccountArea';
+import ExercisesPage from './components/ExercisesPage';
 import { useState } from 'react';
 
 function App() {
@@ -34,6 +35,8 @@ function App() {
     content = <Register />;
   } else if (view === 'login') {
     content = <Login />;
+  } else if (view === 'exercises') {
+    content = <ExercisesPage />;
   } else if (['routines', 'history', 'profile', 'admin'].includes(view) && isLoggedIn) {
     content = <AccountArea section={view} />;
   }
@@ -44,6 +47,7 @@ function App() {
         onRegisterClick={() => setView('register')}
         onLoginClick={() => setView('login')}
         onHomeClick={() => setView('home')}
+          onExercisesClick={() => setView('exercises')}
         onRoutinesClick={() => setView('routines')}
         onHistoryClick={() => setView('history')}
         onProfileClick={() => setView('profile')}

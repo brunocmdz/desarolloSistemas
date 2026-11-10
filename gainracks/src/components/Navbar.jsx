@@ -1,6 +1,6 @@
 import './styles/navbar.css';
 
-function Navbar({ onRegisterClick, onLoginClick, onHomeClick, onRoutinesClick, onHistoryClick, onProfileClick, onAdminClick, onLogoutClick, isLoggedIn, isAdmin, userName }) {
+function Navbar({ onRegisterClick, onLoginClick, onHomeClick, onExercisesClick, onRoutinesClick, onHistoryClick, onProfileClick, onAdminClick, onLogoutClick, isLoggedIn, isAdmin, userName }) {
   return (
     <div className="container">
       <nav className='navbar'>
@@ -8,12 +8,15 @@ function Navbar({ onRegisterClick, onLoginClick, onHomeClick, onRoutinesClick, o
           <a onClick={onHomeClick} className="menu-item">GAINRACKS</a>
         </div>
         <div className='auth-buttons'>
-          {isLoggedIn && <div className="member-links">
-            <button className="menu-item" onClick={onRoutinesClick}>Rutinas</button>
-            <button className="menu-item" onClick={onHistoryClick}>Historial</button>
-            <button className="menu-item" onClick={onProfileClick}>Mi perfil</button>
-            {isAdmin && <button className="menu-item admin-link" onClick={onAdminClick}>Admin</button>}
-          </div>}
+          <div className="member-links">
+            <button className="menu-item" onClick={onExercisesClick}>Ejercicios</button>
+            {isLoggedIn && <>
+              <button className="menu-item" onClick={onRoutinesClick}>Rutinas</button>
+              <button className="menu-item" onClick={onHistoryClick}>Historial</button>
+              <button className="menu-item" onClick={onProfileClick}>Mi perfil</button>
+              {isAdmin && <button className="menu-item admin-link" onClick={onAdminClick}>Admin</button>}
+            </>}
+          </div>
           <div id='login_btns'>
             {isLoggedIn ? (
               <>

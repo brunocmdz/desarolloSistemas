@@ -6,15 +6,18 @@
 
   .navbar {
     display: flex;
+    flex-wrap: nowrap;
     justify-content: space-between;
     align-items: center;
     background-color: #1e1e1e;
     padding: 10px 20px;
+    color: #ffffff;
+    box-sizing: border-box;
   }
 
   .brand-logo a {
-    -webkit-text-stroke: 1px #b80f0f;
-    color: #1e1e1e;
+    -webkit-text-stroke: 0.6px #b80f0f;
+    color: #ffffff;
     font-size: 36px;
     text-decoration: none;
     font-weight: bold;
@@ -36,8 +39,6 @@
 
   .auth-buttons #login:hover,
   .auth-buttons #register:hover{
-    transition: color 0.1s linear 0.05s;
-    transition: background-color 0.1s;
     background-color: #b80f0f;
     color: #ffffff;
   }
@@ -48,40 +49,59 @@
   }
 
   .auth-buttons {
+    display: flex;
+    flex: 1;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
     margin-right: 40px;
   }
 
   .member-links {
     display: flex;
+    flex: 0 0 auto;
     align-items: center;
-    gap: 4px;
+    gap: 8px;
+    white-space: nowrap;
   }
 
   .member-links .menu-item,
   #logout {
     border: 0;
     background: transparent;
-    color: #e6e8e4;
+    color: #ffffff;
     font: inherit;
     font-size: 13px;
     cursor: pointer;
   }
 
   .member-links .menu-item:hover,
-  #logout:hover,
-  .member-links .admin-link {
-    color: #d3ef59;
+  #logout:hover {
+    color: #e53935;
   }
 
-  #login_btns { display: flex; align-items: center; gap: 8px; }
+  #login_btns { display: flex; flex: 0 0 auto; align-items: center; gap: 8px; white-space: nowrap; }
 
   @media (max-width: 850px) {
-    .navbar { align-items: flex-start; gap: 12px; flex-direction: column; }
-    .brand-logo a { margin-left: 0; font-size: 28px; }
-    .auth-buttons { margin: 0; width: 100%; }
-    #login_btns { flex-wrap: wrap; }
-    .member-links { flex-wrap: wrap; }
+    .navbar { gap: 12px; padding: 9px 14px; }
+    .brand-logo { flex: 0 0 auto; }
+    .brand-logo a { margin-left: 0; font-size: 26px; }
+    .auth-buttons { gap: 8px; margin: 0; overflow-x: auto; scrollbar-width: none; }
+    .auth-buttons::-webkit-scrollbar { display: none; }
+    .member-links { gap: 5px; }
+    .member-links .menu-item, #logout { padding: 6px; font-size: 12px; }
+    .auth-buttons #login, .auth-buttons #register { margin-left: 0; padding: 7px 9px; font-size: 12px; white-space: nowrap; }
     .estado-logeado { display: none; }
+  }
+
+  @media (max-width: 480px) {
+    .navbar { gap: 8px; padding: 8px 10px; }
+    .brand-logo a { font-size: 21px; }
+    .auth-buttons { gap: 4px; }
+    .member-links { gap: 1px; }
+    .member-links .menu-item, #logout { padding: 5px 4px; font-size: 11px; }
+    .auth-buttons #login, .auth-buttons #register { padding: 6px 7px; font-size: 11px; }
   }
 
 .estado-logeado {

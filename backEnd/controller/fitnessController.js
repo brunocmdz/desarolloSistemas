@@ -1,19 +1,47 @@
 const User = require('../model/user');
 const Routine = require('../model/routine');
 const WorkoutSession = require('../model/workoutSession');
+const Exercise = require('../model/exercise');
 
-const cleanExercises = (items) => {
+const normalizeName = (name) => String(name || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+
+const normalizeRoutineExercises = async (items) => {
   if (!Array.isArray(items) || items.length === 0 || items.length > 50) return null;
-  const exercises = items.map((item) => ({
-    name: String(item.name || '').trim().slice(0, 100),
-    muscle: String(item.muscle || '').trim().slice(0, 50),
-    sets: Number(item.sets),
-    reps: Number(item.reps),
-    weightKg: item.weightKg === '' || item.weightKg == null ? null : Number(item.weightKg)
-  }));
+  const catalog = await Exercise.findAll();
+  const catalogById = new Map(catalog.map((exercise) => [exercise.id, exercise]));
+  const requestedIds = items.map((item) => String(item.exerciseId || item.id || ''));
+  const resolved = items.map((item, index) => {
+    let exercise = catalogById.get(requestedIds[index]);
+    if (!exercise) {
+      const oldName = normalizeName(item.name);
+      exercise = catalog.find((candidate) => {
+        const catalogName = normalizeName(candidate.name);
+        return catalogName === oldName || catalogName.startsWith(`${oldName} `) || oldName.startsWith(`${catalogName} `);
+      });
+    }
+    if (!exercise) return null;
 
-  if (exercises.some((exercise) => !exercise.name || !Number.isInteger(exercise.sets) || exercise.sets < 1 || exercise.sets > 30 || !Number.isInteger(exercise.reps) || exercise.reps < 1 || exercise.reps > 100 || (exercise.weightKg !== null && (!Number.isFinite(exercise.weightKg) || exercise.weightKg < 0 || exercise.weightKg > 1000)))) return null;
-  return exercises;
+    const rawSets = Array.isArray(item.sets) ? item.sets : null;
+    const setCount = Number(item.setsCount ?? rawSets?.length ?? item.sets);
+    const reps = Number(item.targetReps ?? item.reps ?? rawSets?.[0]?.targetReps ?? rawSets?.[0]?.reps);
+    const weightValue = item.targetWeightKg ?? item.weightKg ?? rawSets?.[0]?.targetWeightKg;
+    const weightKg = weightValue === '' || weightValue == null ? null : Number(weightValue);
+    if (!Number.isInteger(setCount) || setCount < 1 || setCount > 30 || !Number.isInteger(reps) || reps < 1 || reps > 100 || (weightKg !== null && (!Number.isFinite(weightKg) || weightKg < 0 || weightKg > 1000))) return null;
+
+    return {
+      exerciseId: exercise.id,
+      name: exercise.name,
+      muscle: exercise.muscleGroup,
+      sets: Array.from({ length: setCount }, (_, index) => ({
+        setNumber: index + 1,
+        targetReps: Number.isInteger(rawSets?.[index]?.targetReps) ? rawSets[index].targetReps : reps,
+        targetWeightKg: rawSets?.[index]?.targetWeightKg ?? weightKg
+      }))
+    };
+  });
+
+  if (resolved.some((exercise) => !exercise) || new Set(resolved.map((exercise) => exercise.exerciseId)).size !== resolved.length) return null;
+  return resolved;
 };
 
 const getProfile = async (req, res) => {
@@ -42,12 +70,15 @@ const updateProfile = async (req, res) => {
 
 const listRoutines = async (req, res) => {
   const routines = await Routine.findAll({ where: { userId: req.user.id_usuario }, order: [['updatedAt', 'DESC']] });
-  return res.json(routines);
+  return res.json(await Promise.all(routines.map(async (routine) => ({
+    ...routine.toJSON(),
+    exercises: await normalizeRoutineExercises(routine.exercises)
+  }))));
 };
 
 const createRoutine = async (req, res) => {
   const name = String(req.body.name || '').trim().slice(0, 100);
-  const exercises = cleanExercises(req.body.exercises);
+  const exercises = await normalizeRoutineExercises(req.body.exercises);
   if (!name || !exercises) return res.status(400).json({ message: 'Añade un nombre y al menos un ejercicio válido.' });
 
   const routine = await Routine.create({
@@ -62,18 +93,41 @@ const createRoutine = async (req, res) => {
 const completeWorkout = async (req, res) => {
   const { routineId, durationMinutes, notes } = req.body;
   const routine = routineId ? await Routine.findOne({ where: { id: routineId, userId: req.user.id_usuario } }) : null;
-  if (routineId && !routine) return res.status(404).json({ message: 'Rutina no encontrada.' });
+  if (!routine) return res.status(404).json({ message: 'Rutina no encontrada.' });
 
-  const exercises = cleanExercises(req.body.exercises || routine?.exercises);
+  const plannedExercises = await normalizeRoutineExercises(routine.exercises);
+  const submittedExercises = req.body.exercises;
   const duration = durationMinutes === '' || durationMinutes == null ? null : Number(durationMinutes);
-  if (!exercises || (duration !== null && (!Number.isInteger(duration) || duration < 1 || duration > 1440))) {
-    return res.status(400).json({ message: 'Registra ejercicios y una duración válida.' });
+  if (!plannedExercises || !Array.isArray(submittedExercises) || submittedExercises.length !== plannedExercises.length || (duration !== null && (!Number.isInteger(duration) || duration < 1 || duration > 1440))) {
+    return res.status(400).json({ message: 'Completa las series de la rutina y registra una duración válida.' });
+  }
+
+  const exercises = [];
+  for (const planned of plannedExercises) {
+    const performed = submittedExercises.find((item) => String(item.exerciseId) === planned.exerciseId);
+    if (!performed || !Array.isArray(performed.sets) || performed.sets.length !== planned.sets.length) {
+      return res.status(400).json({ message: `Completa todas las series de ${planned.name}.` });
+    }
+    const sets = performed.sets.map((set, index) => {
+      const reps = Number(set.reps);
+      const weightKg = set.weightKg === '' || set.weightKg == null ? null : Number(set.weightKg);
+      if (!Number.isInteger(reps) || reps < 1 || reps > 100 || (weightKg !== null && (!Number.isFinite(weightKg) || weightKg < 0 || weightKg > 1000))) return null;
+      return {
+        setNumber: index + 1,
+        targetReps: planned.sets[index].targetReps,
+        targetWeightKg: planned.sets[index].targetWeightKg,
+        reps,
+        weightKg
+      };
+    });
+    if (sets.some((set) => !set)) return res.status(400).json({ message: `Revisa repeticiones y peso de ${planned.name}.` });
+    exercises.push({ exerciseId: planned.exerciseId, name: planned.name, muscle: planned.muscle, sets });
   }
 
   const session = await WorkoutSession.create({
     userId: req.user.id_usuario,
-    routineId: routine?.id || null,
-    routineName: routine?.name || String(req.body.routineName || 'Entrenamiento libre').trim().slice(0, 100),
+    routineId: routine.id,
+    routineName: routine.name,
     durationMinutes: duration,
     notes: String(notes || '').trim().slice(0, 500) || null,
     exercises

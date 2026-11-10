@@ -2,6 +2,7 @@ require('dotenv').config();
 require('./model/user');
 require('./model/routine');
 require('./model/workoutSession');
+require('./model/exercise');
 
 const express = require('express');
 const app = express();
@@ -9,7 +10,8 @@ const port = Number(process.env.PORT || 3000);
 const cors = require('cors');
 const sequelize = require('./config/database');
 const { getUser, registerUser, login } = require('./controller/controller');
-const { getExercisesByMuscle } = require('./controller/exerciseController');
+const { getExercises, getExercisesByMuscle, getExerciseCatalog } = require('./controller/exerciseController');
+const Exercise = require('./model/exercise');
 const { isAuth, isAdmin } = require('./midlewares/auth');
 const fitness = require('./controller/fitnessController');
 
@@ -29,12 +31,16 @@ app.get('/api/history', isAuth, fitness.getHistory);
 app.get('/api/admin/dashboard', isAuth, isAdmin, fitness.getAdminDashboard);
 app.put('/api/admin/users/state', isAuth, isAdmin, fitness.setUserState);
 
-// Ruta para la API de ejercicios
+// Catálogo de ejercicios
+app.get('/api/exercises', getExercises);
 app.get('/api/exercises/:muscle', getExercisesByMuscle);
 
 const startServer = async () => {
   await sequelize.authenticate();
   await sequelize.sync({ alter: true });
+  await Exercise.bulkCreate(getExerciseCatalog(), {
+    updateOnDuplicate: ['name', 'muscleGroup', 'image']
+  });
   if (process.env.ADMIN_EMAIL) {
     await require('./model/user').update(
       { isAdmin: true },
