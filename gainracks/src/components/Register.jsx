@@ -6,14 +6,15 @@ export default function Register() {
   const [email, setEmail] = useState(''); 
   const [firstName, setFirstName] = useState(''); 
   const [lastName, setLastName] = useState(''); 
+    const [message, setMessage] = useState('');
 
   const register = async () => {
       try {
-          const response = await axios.post(`http://localhost:3000/users/regist/?email=${email}&password=${password}&firstName=${firstName}&lastName=${lastName}`)
-          alert("Usuario creado")
+        await axios.post('http://localhost:3000/users/regist', { email, password, firstName, lastName });
+        setMessage('Cuenta creada. Ya puedes iniciar sesión.');
       }
       catch (error){
-          alert(error.message)
+        setMessage(error.response?.data?.message || 'No se pudo crear la cuenta.');
       }
   }
   return (
@@ -30,6 +31,7 @@ export default function Register() {
           <input type="email" placeholder="Correo Electrónico" onChange={(event) => setEmail(event.target.value)}/>
           <input type="password" placeholder="Contraseña" onChange={(event) => setPassword(event.target.value)}/>
           <button onClick={register} type="button">Siguiente</button>
+          {message && <p role="status">{message}</p>}
           <p className="form-terms">
             Creando una cuenta, acepta nuestra{' '}
             <a href="#">política de privacidad</a> y{' '}

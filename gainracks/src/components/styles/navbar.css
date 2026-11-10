@@ -51,6 +51,39 @@
     margin-right: 40px;
   }
 
+  .member-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .member-links .menu-item,
+  #logout {
+    border: 0;
+    background: transparent;
+    color: #e6e8e4;
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .member-links .menu-item:hover,
+  #logout:hover,
+  .member-links .admin-link {
+    color: #d3ef59;
+  }
+
+  #login_btns { display: flex; align-items: center; gap: 8px; }
+
+  @media (max-width: 850px) {
+    .navbar { align-items: flex-start; gap: 12px; flex-direction: column; }
+    .brand-logo a { margin-left: 0; font-size: 28px; }
+    .auth-buttons { margin: 0; width: 100%; }
+    #login_btns { flex-wrap: wrap; }
+    .member-links { flex-wrap: wrap; }
+    .estado-logeado { display: none; }
+  }
+
 .estado-logeado {
   font-weight: bold;
   padding: 8px;

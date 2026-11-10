@@ -1,10 +1,10 @@
 const User = require('../model/user');
-const { Op } = require('sequelize');
 const bcrypt = require('bcrypt');
+const { createAuthToken } = require('../midlewares/auth');
 
 const getUser = async(_req, res) => {
     try {
-        const users = await User.findAll();
+        const users = await User.findAll({ attributes: { exclude: ['password'] } });
         res.json(users);
     } catch (err) {
         console.error('Error al obtener los usuarios:', err);
@@ -15,7 +15,8 @@ const getUserByEmail = async(req, res) => {
     try {
         const email = req.params.email;
         const users = await User.findOne({
-            where : {email}
+            where: { email },
+            attributes: { exclude: ['password'] }
         });
         res.json(users);
     } catch (err) {
@@ -40,12 +41,12 @@ const editUser = async(req, res) => {
 };
 const setUserState = async (req, res) => {
     try {
-        const { id, state } = req.query;
+        const { id, state } = req.body;
         if (!id) {
             return res.status(400).json({ message: 'Falta id del usuario' });
         }
         // convertir state a boolean (acepta 'true'/'false', '1'/'0', boolean)
-        const newState = (state === true);
+        const newState = state === true || state === 'true';
 
         const [updated] = await User.update(
             { state: newState },
@@ -65,32 +66,39 @@ const setUserState = async (req, res) => {
 };
 async function registerUser(req, res) {
     try {
-        const { email, password, firstName, lastName } = req.query;
+        const { email, password, firstName, lastName } = req.body;
+        if (!email || !password || !firstName || !lastName || password.length < 8) {
+            return res.status(400).json({ message: 'Completa todos los campos. La contraseña debe tener al menos 8 caracteres.' });
+        }
 
-        // Encriptar la contraseña antes de guardar
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const users = await User.create({
-            email,
-            password: hashedPassword,  // ← ya encriptada
-            firstName,
-            lastName,
-            state: true
+        const user = await User.create({
+            email: email.trim().toLowerCase(),
+            password: hashedPassword,
+            firstName: firstName.trim(),
+            lastName: lastName.trim(),
+            state: true,
+            isAdmin: email.trim().toLowerCase() === process.env.ADMIN_EMAIL?.trim().toLowerCase()
         });
 
-        res.json(users);
+        res.status(201).json({ id: user.id_usuario, email: user.email, firstName: user.firstName, lastName: user.lastName });
 
     } catch (err) {
         console.error('Error al obtener los usuarios:', err);
+        if (err.name === 'SequelizeUniqueConstraintError') {
+            return res.status(409).json({ message: 'Ya existe una cuenta con ese correo.' });
+        }
         res.status(500).json({ message: 'Error interno del servidor', error: err.message });
     }
 };
 async function login(req, res) {
   try {
-    const { email, password } = req.query;
+    const { email, password } = req.body;
+    if (!email || !password) return res.status(400).json({ message: 'Correo y contraseña son obligatorios.' });
 
     // Buscar usuario solo por email
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ where: { email: email.trim().toLowerCase() } });
 
     if (!user) {
       return res.status(401).json({ message: "Credenciales inválidas" });
@@ -103,11 +111,6 @@ async function login(req, res) {
       return res.status(401).json({ message: "Credenciales inválidas" });
     }
 
-    // impedir login si el usuario está desactivado
-    if (user.state === false || user.state === 'false' || user.state === 0) {
-        return res.status(403).json({ message: 'Usuario desactivado' });
-    }
-    // impedir login si el usuario está desactivado
     if (user.state === false) {
             return res.status(403).json({ message: 'Usuario desactivado' });
     }
@@ -117,7 +120,8 @@ async function login(req, res) {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      isAdmin: user.isAdmin
+    isAdmin: user.isAdmin,
+    token: createAuthToken(user.id_usuario)
     });
 
   } catch (err) {

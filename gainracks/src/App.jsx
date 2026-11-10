@@ -4,28 +4,25 @@ import HomePublic from './components/HomePublic';
 import HomePrivate from './components/HomePrivate';
 import Login from './components/Login';
 import Register from './components/Register';
-import { useState, useEffect } from 'react';
+import AccountArea from './components/AccountArea';
+import { useState } from 'react';
 
 function App() {
   const [view, setView] = useState('home');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userName, setUserName] = useState('');
-
-  useEffect(() => {
-    const userId = localStorage.getItem("userId");
-    setIsLoggedIn(!!userId);
-    const name = localStorage.getItem('userName') || '';
-    setUserName(name);
-  }, []);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => Boolean(localStorage.getItem('authToken')));
+  const [userName, setUserName] = useState(() => localStorage.getItem('userName') || '');
+  const [isAdmin, setIsAdmin] = useState(() => localStorage.getItem('isAdmin') === 'true');
 
   const handleLogout = () => {
     // Limpiar almacenamiento local y volver a vista pública
     localStorage.removeItem('userId');
+    localStorage.removeItem('authToken');
     localStorage.removeItem('userName');
     localStorage.removeItem('userEmail');
     localStorage.removeItem('userLastName');
     localStorage.removeItem('isAdmin');
     setIsLoggedIn(false);
+    setIsAdmin(false);
     setUserName('');
     setView('home');
   };
@@ -37,6 +34,8 @@ function App() {
     content = <Register />;
   } else if (view === 'login') {
     content = <Login />;
+  } else if (['routines', 'history', 'profile', 'admin'].includes(view) && isLoggedIn) {
+    content = <AccountArea section={view} />;
   }
 
   return (
@@ -45,8 +44,13 @@ function App() {
         onRegisterClick={() => setView('register')}
         onLoginClick={() => setView('login')}
         onHomeClick={() => setView('home')}
+        onRoutinesClick={() => setView('routines')}
+        onHistoryClick={() => setView('history')}
+        onProfileClick={() => setView('profile')}
+        onAdminClick={() => setView('admin')}
         onLogoutClick={handleLogout}
         isLoggedIn={isLoggedIn}
+        isAdmin={isAdmin}
         userName={userName}
       />
       <main className="content">

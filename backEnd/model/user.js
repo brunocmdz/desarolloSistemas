@@ -37,6 +37,18 @@ const User = sequelize.define('User',
             type: DataTypes.BOOLEAN,
             allowNull: false,
             defaultValue: false
+        },
+        weightKg: {
+            type: DataTypes.DECIMAL(5, 2),
+            allowNull: true
+        },
+        heightCm: {
+            type: DataTypes.DECIMAL(5, 2),
+            allowNull: true
+        },
+        goal: {
+            type: DataTypes.STRING(120),
+            allowNull: true
         }
     },
     {

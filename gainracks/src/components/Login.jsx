@@ -8,12 +8,13 @@ function Login() {
 
   const login = async () => {
     try {
-      const response = await axios.post(`http://localhost:3000/users/login/?email=${email}&password=${password}`);
+      const response = await axios.post('http://localhost:3000/users/login', { email, password });
 
       alert("Inicio de sesión exitoso");
 
-      const { id, firstName, lastName, isAdmin } = response.data;
+      const { id, firstName, lastName, isAdmin, token } = response.data;
       localStorage.setItem("userId", id);
+      localStorage.setItem("authToken", token);
       localStorage.setItem("userEmail", email);
       localStorage.setItem("userName", firstName);
       localStorage.setItem("userLastName", lastName);
@@ -21,7 +22,7 @@ function Login() {
       console.log("Usuario logueado:", firstName, lastName);    
       window.location.reload();
     } catch (error) {
-      alert(error.message);
+      alert(error.response?.data?.message || 'No se pudo iniciar sesión.');
     }
   };
 
