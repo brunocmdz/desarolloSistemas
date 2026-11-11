@@ -7,12 +7,15 @@ Aplicación web para planificar rutinas de gimnasio, registrar entrenamientos y 
 - Registro e inicio de sesión con contraseña cifrada y sesión Bearer firmada.
 - Perfil de usuario con peso, altura y objetivo de entrenamiento.
 - Catálogo de ejercicios en PostgreSQL, organizado por grupo muscular, con instrucciones y ejercicios personalizados.
+- Animaciones GIF en ejercicios compatibles, servidas desde la versión `v1.1.0` de ExerciseGymGifsDB mediante jsDelivr.
 - Creación de rutinas desde el catálogo o desde plantillas: PPL (empuje, tirón y piernas), Upper/Lower y Full Body.
 - Registro del rendimiento por serie: repeticiones realizadas y peso utilizado, con referencia a sesiones anteriores.
 - Historial y gráficos de volumen, repeticiones, peso máximo, 1RM estimado y calorías aproximadas.
 - Panel de administración protegido por rol.
 
 Las calorías se estiman con una intensidad de fuerza moderada de 5 MET, la duración de la sesión y el peso corporal. Si el perfil no tiene peso, se asumen 70 kg. Es una estimación orientativa, no una medición médica.
+
+Las animaciones se muestran en los ejercicios que tienen una correspondencia explícita con ExerciseGymGifsDB; los demás conservan su imagen actual. El repositorio de GIFs advierte que el material fue recopilado de Internet y puede pertenecer a terceros, por lo que se deben revisar los derechos de uso antes de publicar o comercializar la aplicación.
 
 ## Tecnologías
 

@@ -8,6 +8,42 @@ const MUSCLE_GROUPS = [
   ['gluteo', 'Glúteos'], ['pantorrilla', 'Pantorrillas'], ['cardio', 'Cardio']
 ];
 
+const EXERCISE_GIFS = {
+  'ex-1': 'pectorals/barbell-bench-press',
+  'ex-2': 'pectorals/dumbbell-incline-bench-press',
+  'ex-3': 'pectorals/push-up',
+  'ex-4': 'lats/pull-up',
+  'ex-8': 'delts/dumbbell-lateral-raise',
+  'ex-11': 'biceps/barbell-curl',
+  'ex-12': 'biceps/dumbbell-hammer-curl',
+  'ex-13': 'triceps/cable-pushdown'
+};
+const EXERCISE_GIF_BASE = 'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0';
+
+function ExerciseImage({ exercise, alt, className }) {
+  const gifPath = EXERCISE_GIFS[exercise.id];
+  const gifUrl = gifPath ? `${EXERCISE_GIF_BASE}/${gifPath}.gif` : '';
+  const fallbackUrl = exercise.image || '';
+  const imageUrl = gifUrl || fallbackUrl;
+
+  if (!imageUrl) return null;
+
+  return <img
+    src={imageUrl}
+    alt={alt}
+    className={className}
+    loading="lazy"
+    onError={(event) => {
+      if (gifUrl && fallbackUrl && event.currentTarget.dataset.fallbackAttempted !== 'true') {
+        event.currentTarget.dataset.fallbackAttempted = 'true';
+        event.currentTarget.src = fallbackUrl;
+      } else {
+        event.currentTarget.hidden = true;
+      }
+    }}
+  />;
+}
+
 function ExercisesPage() {
   const [exercises, setExercises] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -102,7 +138,9 @@ function ExercisesPage() {
         return <section className="exercise-group" key={muscle}>
           <div className="exercise-group-heading"><h2>{title}</h2><span>{groupExercises.length}</span></div>
           <div className="exercise-catalog-grid">{groupExercises.map((exercise) => <button className="exercise-catalog-item" key={exercise.id} onClick={() => setSelectedExercise(exercise)} aria-haspopup="dialog">
-            {exercise.image ? <img src={exercise.image} alt="" loading="lazy" onError={(event) => { event.currentTarget.hidden = true; }} /> : <div className="exercise-image-placeholder">{title}</div>}
+            {exercise.image || EXERCISE_GIFS[exercise.id]
+              ? <ExerciseImage exercise={exercise} alt="" />
+              : <div className="exercise-image-placeholder">{title}</div>}
             <div><h3>{exercise.name}</h3><span>{exercise.isCustom ? 'Personalizado' : title}</span></div>
           </button>)}</div>
         </section>;
@@ -112,6 +150,7 @@ function ExercisesPage() {
           <button className="exercise-modal-close" onClick={() => setSelectedExercise(null)} aria-label="Cerrar ficha">×</button>
           <span className="account-eyebrow">{MUSCLE_GROUPS.find(([muscle]) => muscle === selectedExercise.muscleGroup)?.[1] || selectedExercise.muscleGroup}</span>
           <h2 id="exercise-modal-title">{selectedExercise.name}</h2>
+          {(EXERCISE_GIFS[selectedExercise.id] || selectedExercise.image) && <ExerciseImage exercise={selectedExercise} alt={`Animación de ${selectedExercise.name}`} className="exercise-modal-animation" />}
           <p className="exercise-modal-description">{selectedExercise.description}</p>
           <h3>Cómo hacerlo</h3>
           <ol>{(selectedExercise.instructions || []).map((instruction, index) => <li key={`${selectedExercise.id}-${index}`}>{instruction}</li>)}</ol>

@@ -24,6 +24,7 @@
 .exercise-modal-close { position: absolute; top: 12px; right: 12px; display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid #454d47; border-radius: 4px; background: #171918; color: #ffffff; font-size: 22px; cursor: pointer; }
 .exercise-modal-close:hover { border-color: #b80f0f; color: #ef4444; }
 .exercise-modal h2 { margin: 8px 40px 10px 0; color: #ffffff; font-size: 25px; }
+.exercise-modal-animation { display: block; width: min(100%, 360px); max-height: 320px; margin: 18px auto; object-fit: contain; border-radius: 4px; background: #141414; }
 .exercise-modal-description { color: #c1c6c2; font-size: 14px; line-height: 1.65; }
 .exercise-modal h3 { margin: 24px 0 10px; color: #ffffff; font-size: 14px; }
 .exercise-modal ol { display: grid; gap: 10px; padding-left: 22px; color: #c1c6c2; font-size: 13px; line-height: 1.55; }
