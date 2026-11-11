@@ -1,6 +1,6 @@
 import './styles/navbar.css';
 
-function Navbar({ onRegisterClick, onLoginClick, onHomeClick, onExercisesClick, onRoutinesClick, onHistoryClick, onProfileClick, onAdminClick, onLogoutClick, isLoggedIn, isAdmin, userName }) {
+function Navbar({ onRegisterClick, onLoginClick, onHomeClick, onExercisesClick, onRoutinesClick, onHistoryClick, onProfileClick, onAdminClick, isLoggedIn, isAdmin, userName }) {
   return (
     <div className="container">
       <nav className='navbar'>
@@ -19,10 +19,7 @@ function Navbar({ onRegisterClick, onLoginClick, onHomeClick, onExercisesClick, 
           </div>
           <div id='login_btns'>
             {isLoggedIn ? (
-              <>
-                <span className="estado-logeado">Hola, {userName}</span>
-                <button className='menu-item' onClick={onLogoutClick} id='logout'>Cerrar sesión</button>
-              </>
+              <span className="estado-logeado">Hola, {userName}</span>
             ) : (
               <>
                 <button className='menu-item' onClick={onLoginClick} id='login'>Iniciar Sesión</button>

@@ -37,7 +37,7 @@ async function apiRequest(path, options = {}) {
   return data;
 }
 
-function AccountArea({ section }) {
+function AccountArea({ section, onLogout }) {
   const [profile, setProfile] = useState(null);
   const [routines, setRoutines] = useState([]);
   const [history, setHistory] = useState([]);
@@ -250,7 +250,7 @@ function AccountArea({ section }) {
     return [{
       sessionId: session.id,
       date: session.completedAt,
-      sessionLabel: new Date(session.completedAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }),
+      sessionLabel: new Date(session.completedAt).toLocaleString('es-ES', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }),
       volume: Math.round(volume), reps, maxWeight, estimatedRm: Math.round(estimatedRm * 10) / 10
     }];
   }) : [];
@@ -369,7 +369,10 @@ function AccountArea({ section }) {
           <label>Peso (kg)<input type="number" min="1" max="500" step="0.1" value={profile.weightKg || ''} onChange={(event) => setProfile({ ...profile, weightKg: event.target.value })} placeholder="Por ejemplo, 72.5" /></label>
           <label>Altura (cm)<input type="number" min="50" max="300" step="0.5" value={profile.heightCm || ''} onChange={(event) => setProfile({ ...profile, heightCm: event.target.value })} placeholder="Por ejemplo, 175" /></label>
           <label className="profile-goal">Objetivo<input maxLength="120" value={profile.goal || ''} onChange={(event) => setProfile({ ...profile, goal: event.target.value })} placeholder="Ej. Ganar fuerza" /></label>
-          <button type="submit" className="primary-action">Guardar cambios</button>
+          <div className="profile-actions">
+            <button type="submit" className="primary-action">Guardar cambios</button>
+            <button type="button" className="profile-logout" onClick={onLogout}>Cerrar sesión</button>
+          </div>
         </form>
       </section>}
 

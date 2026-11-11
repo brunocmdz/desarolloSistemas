@@ -97,6 +97,9 @@
 .profile-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .profile-goal { grid-column: 1 / -1; }
 .profile-form button { justify-self: start; }
+.profile-actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 10px; }
+.profile-logout { border: 1px solid #b80f0f; border-radius: 4px; background: transparent; color: #ffffff; padding: 11px 15px; font-size: 13px; font-weight: 700; cursor: pointer; }
+.profile-logout:hover { background: #b80f0f; }
 .admin-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-bottom: 22px; }
 .admin-stat { display: grid; gap: 8px; border-left: 3px solid var(--account-accent); background: var(--account-panel); padding: 17px 20px; }
 .admin-stat span { color: var(--account-muted); font-size: 12px; }

@@ -38,7 +38,7 @@ function App() {
   } else if (view === 'exercises') {
     content = <ExercisesPage />;
   } else if (['routines', 'history', 'profile', 'admin'].includes(view) && isLoggedIn) {
-    content = <AccountArea section={view} />;
+    content = <AccountArea section={view} onLogout={handleLogout} />;
   }
 
   return (
@@ -52,7 +52,6 @@ function App() {
         onHistoryClick={() => setView('history')}
         onProfileClick={() => setView('profile')}
         onAdminClick={() => setView('admin')}
-        onLogoutClick={handleLogout}
         isLoggedIn={isLoggedIn}
         isAdmin={isAdmin}
         userName={userName}

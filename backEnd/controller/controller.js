@@ -66,9 +66,15 @@ const setUserState = async (req, res) => {
 };
 async function registerUser(req, res) {
     try {
-        const { email, password, firstName, lastName } = req.body;
-        if (!email || !password || !firstName || !lastName || password.length < 8) {
+        const { email, password, firstName, lastName, weightKg, heightCm, goal } = req.body;
+        if (typeof email !== 'string' || typeof password !== 'string' || typeof firstName !== 'string' || typeof lastName !== 'string' || password.length < 8) {
             return res.status(400).json({ message: 'Completa todos los campos. La contraseña debe tener al menos 8 caracteres.' });
+        }
+
+        const parsedWeight = weightKg === '' || weightKg == null ? null : Number(weightKg);
+        const parsedHeight = heightCm === '' || heightCm == null ? null : Number(heightCm);
+        if ((parsedWeight !== null && (!Number.isFinite(parsedWeight) || parsedWeight < 1 || parsedWeight > 500)) || (parsedHeight !== null && (!Number.isFinite(parsedHeight) || parsedHeight < 50 || parsedHeight > 300))) {
+            return res.status(400).json({ message: 'El peso debe estar entre 1 y 500 kg y la altura entre 50 y 300 cm.' });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -78,6 +84,9 @@ async function registerUser(req, res) {
             password: hashedPassword,
             firstName: firstName.trim(),
             lastName: lastName.trim(),
+            weightKg: parsedWeight,
+            heightCm: parsedHeight,
+            goal: String(goal || '').trim().slice(0, 120) || null,
             state: true,
             isAdmin: email.trim().toLowerCase() === process.env.ADMIN_EMAIL?.trim().toLowerCase()
         });

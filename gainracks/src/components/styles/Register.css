@@ -86,6 +86,34 @@ body {
   color: #aaa;
   margin-top: 8px;
 }
+.form-box label {
+  display: grid;
+  flex: 1;
+  gap: 7px;
+  color: #c9c9c9;
+  text-align: left;
+  font-size: 12px;
+}
+
+.form-box select {
+  width: 100%;
+  background: #141414;
+  border: 1px solid #333;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 2px;
+  font-size: 14px;
+}
+
+.form-box select:focus {
+  border-color: #b80f0f;
+  outline: none;
+}
+
+.biometric-row label input {
+  width: 100%;
+}
+
 
 .form-terms a {
   color: #b80f0f;
