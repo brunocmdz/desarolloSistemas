@@ -22,6 +22,14 @@ const formatSessionExercise = (exercise) => {
     : `${exercise.sets ?? '?'} × ${exercise.reps ?? '?'} reps`;
   return `${exercise.name}: ${performance}`;
 };
+const ROUTINE_PRESETS = [
+  { id: 'ppl-push', group: 'PPL', name: 'Empuje', description: 'Pecho, hombros y tríceps.', exercises: [['ex-1', 4, 8], ['ex-2', 3, 10], ['ex-29', 3, 8], ['ex-8', 3, 12], ['ex-13', 3, 12], ['ex-46', 3, 12]] },
+  { id: 'ppl-pull', group: 'PPL', name: 'Tirón', description: 'Espalda y bíceps.', exercises: [['ex-4', 4, 8], ['ex-5', 4, 8], ['ex-6', 3, 10], ['ex-41', 3, 15], ['ex-11', 3, 10], ['ex-12', 3, 12]] },
+  { id: 'ppl-legs', group: 'PPL', name: 'Piernas', description: 'Cuádriceps, isquiotibiales y pantorrillas.', exercises: [['ex-15', 4, 8], ['ex-17', 3, 10], ['ex-16', 3, 10], ['ex-50', 3, 12], ['ex-48', 3, 12], ['ex-19', 4, 12], ['ex-9', 3, 12]] },
+  { id: 'upper', group: 'Upper / Lower', name: 'Upper', description: 'Tren superior completo.', exercises: [['ex-1', 4, 8], ['ex-5', 4, 8], ['ex-29', 3, 8], ['ex-6', 3, 10], ['ex-2', 3, 10], ['ex-11', 3, 10], ['ex-13', 3, 12]] },
+  { id: 'lower', group: 'Upper / Lower', name: 'Lower', description: 'Tren inferior completo.', exercises: [['ex-15', 4, 8], ['ex-17', 4, 8], ['ex-16', 3, 10], ['ex-50', 3, 12], ['ex-52', 3, 12], ['ex-54', 4, 12]] },
+  { id: 'full-body', group: 'Full Body', name: 'Full Body', description: 'Una sesión equilibrada de cuerpo completo.', exercises: [['ex-15', 3, 8], ['ex-1', 3, 8], ['ex-5', 3, 10], ['ex-17', 3, 10], ['ex-29', 3, 8], ['ex-9', 3, 12]] }
+];
 
 async function apiRequest(path, options = {}) {
   const response = await fetch(`${API_URL}${path}`, {
@@ -49,6 +57,7 @@ function AccountArea({ section, onLogout }) {
   const [workoutExercises, setWorkoutExercises] = useState([]);
   const [routineName, setRoutineName] = useState('');
   const [description, setDescription] = useState('');
+  const [selectedPreset, setSelectedPreset] = useState('');
   const [exercises, setExercises] = useState([emptyExercise()]);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -92,6 +101,22 @@ function AccountArea({ section, onLogout }) {
     setExercises((current) => current.map((exercise, exerciseIndex) => exerciseIndex === index
       ? { ...exercise, [key]: value }
       : exercise));
+  };
+
+  const loadRoutinePreset = (presetId) => {
+    setSelectedPreset('');
+    const preset = ROUTINE_PRESETS.find((item) => item.id === presetId);
+    if (!preset) return;
+    setRoutineName(preset.name);
+    setDescription(preset.description);
+    setExercises(preset.exercises.map(([exerciseId, setsCount, targetReps]) => ({
+      exerciseId,
+      setsCount,
+      targetReps,
+      targetWeightKg: ''
+    })));
+    setMessage(`Plantilla ${preset.name} cargada. Puedes editarla antes de guardar.`);
+    setError('');
   };
 
   const saveRoutine = async (event) => {
@@ -275,6 +300,15 @@ function AccountArea({ section, onLogout }) {
       {section === 'routines' && <div className="account-columns">
         <section className="account-section routine-editor">
           <div className="section-title-row"><div><span className="account-eyebrow">PLANIFICACIÓN</span><h2>Nueva rutina</h2></div></div>
+          <label className="routine-preset-field">Plantillas de entrenamiento
+            <select value={selectedPreset} onChange={(event) => loadRoutinePreset(event.target.value)}>
+              <option value="">Elegir una plantilla para cargar</option>
+              {['PPL', 'Upper / Lower', 'Full Body'].map((group) => <optgroup label={group} key={group}>
+                {ROUTINE_PRESETS.filter((preset) => preset.group === group).map((preset) => <option value={preset.id} key={preset.id}>{preset.name}</option>)}
+              </optgroup>)}
+            </select>
+          </label>
+          <p className="routine-preset-help">La plantilla se carga en el editor; puedes modificar ejercicios, series, reps y pesos antes de guardarla.</p>
           <form onSubmit={saveRoutine} className="account-form">
             <label>Nombre de la rutina<input required maxLength="100" value={routineName} onChange={(event) => setRoutineName(event.target.value)} placeholder="Ej. Tren superior A" /></label>
             <label>Descripción<input maxLength="500" value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Enfoque o notas" /></label>

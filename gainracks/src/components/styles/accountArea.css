@@ -26,6 +26,10 @@
 .account-section { background: var(--account-panel); border: 1px solid var(--account-line); border-radius: 6px; padding: 24px; margin-bottom: 22px; min-width: 0; }
 .section-title-row { margin-bottom: 22px; }
 .section-title-row h2 { margin: 4px 0 0; font-size: 21px; }
+.routine-preset-field { display: grid; gap: 7px; margin-bottom: 8px; color: #c9d0ca; font-size: 12px; font-weight: 650; }
+.routine-preset-field select { width: 100%; min-width: 0; border: 1px solid #454d47; border-radius: 4px; background: var(--account-bg); color: var(--account-text); padding: 10px 12px; font: inherit; font-size: 13px; }
+.routine-preset-field select:focus { outline: 2px solid var(--account-accent); outline-offset: 1px; border-color: transparent; }
+.routine-preset-help { margin: 0 0 12px; color: var(--account-muted); font-size: 11px; line-height: 1.5; }
 .count-badge { display: inline-grid; place-items: center; min-width: 28px; height: 28px; border-radius: 50%; background: #382020; color: #ffffff; font-size: 12px; font-weight: 700; }
 .account-form { display: grid; gap: 15px; }
 .account-form label { display: grid; gap: 7px; color: #c9d0ca; font-size: 12px; font-weight: 650; }
