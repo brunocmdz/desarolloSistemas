@@ -14,8 +14,8 @@ function Footer({ onNavigate, isLoggedIn }) {
 
                 <nav className="footer-navigation" aria-label="Navegación del pie de página">
                     <h2>Explorar</h2>
-                    <button onClick={() => onNavigate('exercises')}>Ejercicios</button>
                     {isLoggedIn ? <>
+                        <button onClick={() => onNavigate('exercises')}>Ejercicios</button>
                         <button onClick={() => onNavigate('routines')}>Mis rutinas</button>
                         <button onClick={() => onNavigate('history')}>Historial</button>
                         <button onClick={() => onNavigate('profile')}>Mi perfil</button>

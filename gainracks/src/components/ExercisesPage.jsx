@@ -23,7 +23,9 @@ function ExercisesPage() {
 
   useEffect(() => {
     let active = true;
-    fetch('http://localhost:3000/api/exercises')
+    fetch('http://localhost:3000/api/exercises', {
+      headers: { Authorization: `Bearer ${localStorage.getItem('authToken') || ''}` }
+    })
       .then((response) => {
         if (!response.ok) throw new Error('No se pudo cargar el catálogo de ejercicios.');
         return response.json();

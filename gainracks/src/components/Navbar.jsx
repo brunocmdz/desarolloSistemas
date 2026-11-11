@@ -9,7 +9,7 @@ function Navbar({ onRegisterClick, onLoginClick, onHomeClick, onExercisesClick, 
         </div>
         <div className='auth-buttons'>
           <div className="member-links">
-            <button className="menu-item" onClick={onExercisesClick}>Ejercicios</button>
+            {isLoggedIn && <button className="menu-item" onClick={onExercisesClick}>Ejercicios</button>}
             {isLoggedIn && <>
               <button className="menu-item" onClick={onRoutinesClick}>Rutinas</button>
               <button className="menu-item" onClick={onHistoryClick}>Historial</button>

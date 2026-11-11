@@ -35,8 +35,10 @@ function App() {
     content = <Register />;
   } else if (view === 'login') {
     content = <Login />;
-  } else if (view === 'exercises') {
+  } else if (view === 'exercises' && isLoggedIn) {
     content = <ExercisesPage />;
+  } else if (view === 'exercises') {
+    content = <HomePublic />;
   } else if (['routines', 'history', 'profile', 'admin'].includes(view) && isLoggedIn) {
     content = <AccountArea section={view} onLogout={handleLogout} />;
   }

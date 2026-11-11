@@ -32,9 +32,9 @@ app.get('/api/admin/dashboard', isAuth, isAdmin, fitness.getAdminDashboard);
 app.put('/api/admin/users/state', isAuth, isAdmin, fitness.setUserState);
 
 // Catálogo de ejercicios
-app.get('/api/exercises', getExercises);
+app.get('/api/exercises', isAuth, getExercises);
 app.post('/api/exercises/custom', isAuth, createCustomExercise);
-app.get('/api/exercises/:muscle', getExercisesByMuscle);
+app.get('/api/exercises/:muscle', isAuth, getExercisesByMuscle);
 
 const startServer = async () => {
   await sequelize.authenticate();
