@@ -4,12 +4,37 @@
 .exercise-group-heading > span { color: #b80f0f; font-size: 12px; font-weight: 700; }
 .exercise-catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
 .exercise-catalog-item { display: grid; grid-template-columns: 76px minmax(0, 1fr); align-items: center; gap: 12px; min-width: 0; padding: 10px; border: 1px solid #343a36; border-radius: 5px; background: #202422; }
+.exercise-catalog-item { color: #ffffff; text-align: left; font: inherit; cursor: pointer; }
+.exercise-catalog-item:hover { border-color: #b80f0f; background: #252020; }
 .exercise-catalog-item img, .exercise-image-placeholder { width: 76px; height: 66px; object-fit: cover; border-radius: 3px; background: #141414; }
 .exercise-image-placeholder { display: grid; place-items: center; padding: 4px; box-sizing: border-box; color: #a7aaa8; text-align: center; font-size: 9px; }
 .exercise-catalog-item h3 { margin: 0; color: #ffffff; font-size: 13px; line-height: 1.35; }
 .exercise-catalog-item span { display: block; margin-top: 5px; color: #a7aaa8; font-size: 10px; }
+.exercise-heading-actions { display: flex; align-items: center; gap: 14px; }
+.exercise-heading-actions p { margin: 0; white-space: nowrap; }
+.custom-exercise-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 0 0 28px; padding: 20px; border: 1px solid #343a36; border-radius: 5px; background: #202422; }
+.custom-form-title { grid-column: 1 / -1; }
+.custom-form-title h2 { margin: 5px 0 0; color: #ffffff; font-size: 19px; }
+.custom-exercise-form label { display: grid; gap: 7px; color: #c9d0ca; font-size: 12px; font-weight: 650; }
+.custom-exercise-form input, .custom-exercise-form select, .custom-exercise-form textarea { width: 100%; min-width: 0; box-sizing: border-box; border: 1px solid #454d47; border-radius: 4px; background: #171918; color: #f0f2ed; padding: 10px 11px; font: inherit; font-size: 13px; resize: vertical; }
+.custom-exercise-form input:focus, .custom-exercise-form select:focus, .custom-exercise-form textarea:focus { outline: 2px solid #b80f0f; outline-offset: 1px; border-color: transparent; }
+.custom-description, .custom-instructions, .custom-exercise-form > button { grid-column: 1 / -1; }
+.exercise-modal-backdrop { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 20px; background: rgb(0 0 0 / 78%); }
+.exercise-modal { position: relative; width: min(560px, 100%); max-height: min(720px, 90vh); overflow-y: auto; box-sizing: border-box; padding: 30px; border: 1px solid #454d47; border-top: 4px solid #b80f0f; border-radius: 5px; background: #202422; color: #f0f2ed; }
+.exercise-modal-close { position: absolute; top: 12px; right: 12px; display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid #454d47; border-radius: 4px; background: #171918; color: #ffffff; font-size: 22px; cursor: pointer; }
+.exercise-modal-close:hover { border-color: #b80f0f; color: #ef4444; }
+.exercise-modal h2 { margin: 8px 40px 10px 0; color: #ffffff; font-size: 25px; }
+.exercise-modal-description { color: #c1c6c2; font-size: 14px; line-height: 1.65; }
+.exercise-modal h3 { margin: 24px 0 10px; color: #ffffff; font-size: 14px; }
+.exercise-modal ol { display: grid; gap: 10px; padding-left: 22px; color: #c1c6c2; font-size: 13px; line-height: 1.55; }
+.exercise-modal li::marker { color: #b80f0f; font-weight: 700; }
+.exercise-author { border-top: 1px solid #343a36; padding-top: 12px; color: #9da69f; font-size: 11px; }
 
 @media (max-width: 500px) {
+  .exercise-heading-actions { align-items: flex-end; flex-direction: column; gap: 8px; }
+  .custom-exercise-form { grid-template-columns: 1fr; padding: 15px; }
+  .custom-form-title, .custom-description, .custom-instructions, .custom-exercise-form > button { grid-column: auto; }
+  .exercise-modal { padding: 24px 19px; }
   .exercise-catalog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .exercise-catalog-item { grid-template-columns: 1fr; align-content: start; gap: 8px; }
   .exercise-catalog-item img, .exercise-image-placeholder { width: 100%; height: 90px; }

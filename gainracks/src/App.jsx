@@ -30,7 +30,7 @@ function App() {
 
   let content;
   if (view === 'home') {
-    content = isLoggedIn ? <HomePrivate /> : <HomePublic />;
+    content = isLoggedIn ? <HomePrivate onNavigate={setView} /> : <HomePublic />;
   } else if (view === 'register') {
     content = <Register />;
   } else if (view === 'login') {

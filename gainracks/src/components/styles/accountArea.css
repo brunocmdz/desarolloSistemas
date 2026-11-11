@@ -75,6 +75,18 @@
 .account-notice { margin-bottom: 18px; border-left: 3px solid var(--account-accent); background: #302020; padding: 12px 15px; font-size: 13px; }
 .account-notice.is-error { border-color: #ef857a; background: #302321; color: #ffd1cc; }
 .history-section { max-width: 900px; }
+.progress-panel { border-top: 1px solid var(--account-line); padding: 20px 0 22px; margin-bottom: 20px; }
+.progress-panel-heading h3 { margin: 4px 0 0; font-size: 17px; }
+.progress-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 16px 0; }
+.progress-controls label { display: grid; gap: 6px; color: var(--account-muted); font-size: 11px; }
+.progress-controls select { width: 100%; min-width: 0; border: 1px solid #454d47; border-radius: 4px; background: var(--account-bg); color: var(--account-text); padding: 9px 10px; font: inherit; font-size: 12px; }
+.progress-highlights { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 16px 0 8px; }
+.progress-highlights > div { display: grid; gap: 5px; padding: 11px; border-left: 2px solid var(--account-accent); background: #171918; }
+.progress-highlights span { color: var(--account-muted); font-size: 10px; }
+.progress-highlights strong { color: var(--account-text); font-size: 14px; }
+.progress-chart { width: 100%; height: 270px; margin: 8px 0; }
+.progress-chart-loading { display: grid; place-items: center; height: 270px; color: var(--account-muted); font-size: 12px; }
+.progress-caption { color: var(--account-muted); font-size: 10px; }
 .history-entry { justify-content: flex-start; padding: 17px 0; border-top: 1px solid var(--account-line); }
 .history-date { flex: 0 0 72px; display: grid; gap: 3px; }
 .history-date strong { color: var(--account-accent); font-size: 14px; }
@@ -118,6 +130,9 @@
   .admin-stat strong { font-size: 21px; }
   .profile-form { grid-template-columns: 1fr; }
   .profile-goal { grid-column: auto; }
+  .progress-controls { grid-template-columns: 1fr; }
+  .progress-highlights { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .progress-highlights > div:last-child { grid-column: 1 / -1; }
   .history-entry { align-items: flex-start; gap: 11px; }
   .history-date { flex-basis: 55px; }
   .history-duration { display: none; }

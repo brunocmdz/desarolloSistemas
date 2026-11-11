@@ -87,7 +87,7 @@
     .navbar { gap: 12px; padding: 9px 14px; }
     .brand-logo { flex: 0 0 auto; }
     .brand-logo a { margin-left: 0; font-size: 26px; }
-    .auth-buttons { gap: 8px; margin: 0; overflow-x: auto; scrollbar-width: none; }
+    .auth-buttons { justify-content: flex-start; gap: 8px; margin: 0; overflow-x: auto; scrollbar-width: none; }
     .auth-buttons::-webkit-scrollbar { display: none; }
     .member-links { gap: 5px; }
     .member-links .menu-item, #logout { padding: 6px; font-size: 12px; }

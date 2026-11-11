@@ -1,5 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
 import './styles/accountArea.css';
+
+const ProgressChart = lazy(() => import('./ProgressChart'));
 
 const API_URL = 'http://localhost:3000';
 const MUSCLE_LABELS = {
@@ -9,6 +11,11 @@ const MUSCLE_LABELS = {
 };
 const emptyExercise = () => ({ exerciseId: '', setsCount: 3, targetReps: 10, targetWeightKg: '' });
 const comparableName = (name) => String(name || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+const sameExerciseName = (firstName, secondName) => {
+  const first = comparableName(firstName);
+  const second = comparableName(secondName);
+  return first === second || first.startsWith(`${second} `) || second.startsWith(`${first} `);
+};
 const formatSessionExercise = (exercise) => {
   const performance = Array.isArray(exercise.sets)
     ? exercise.sets.map((set) => `${set.reps ?? set.targetReps} reps${set.weightKg != null ? ` @ ${set.weightKg} kg` : ''}`).join(', ')
@@ -35,6 +42,8 @@ function AccountArea({ section }) {
   const [routines, setRoutines] = useState([]);
   const [history, setHistory] = useState([]);
   const [exerciseCatalog, setExerciseCatalog] = useState([]);
+  const [selectedStatExercise, setSelectedStatExercise] = useState('');
+  const [selectedMetric, setSelectedMetric] = useState('volume');
   const [dashboard, setDashboard] = useState(null);
   const [activeRoutineId, setActiveRoutineId] = useState(null);
   const [workoutExercises, setWorkoutExercises] = useState([]);
@@ -58,6 +67,14 @@ function AccountArea({ section }) {
       })));
       setHistory(historyData);
       setExerciseCatalog(catalogData);
+      setSelectedStatExercise((current) => {
+        const hasHistory = (exercise) => historyData.some((session) => session.exercises?.some((recorded) =>
+          recorded.exerciseId === exercise.id || sameExerciseName(recorded.name, exercise.name)
+        ));
+        const currentExercise = catalogData.find((exercise) => exercise.id === current);
+        if (currentExercise && hasHistory(currentExercise)) return current;
+        return catalogData.find(hasHistory)?.id || current || catalogData[0]?.id || '';
+      });
       if (section === 'admin' && localStorage.getItem('isAdmin') === 'true') {
         setDashboard(await apiRequest('/api/admin/dashboard'));
       }
@@ -112,10 +129,10 @@ function AccountArea({ section }) {
     setActiveRoutineId(routine.id);
     setWorkoutExercises(routine.exercises.map((exercise) => {
       const previousSession = history.find((session) => session.exercises?.some((performed) =>
-        performed.exerciseId === exercise.exerciseId || comparableName(performed.name) === comparableName(exercise.name))
+        performed.exerciseId === exercise.exerciseId || sameExerciseName(performed.name, exercise.name))
       );
       const previousExercise = previousSession?.exercises.find((performed) =>
-        performed.exerciseId === exercise.exerciseId || comparableName(performed.name) === comparableName(exercise.name)
+        performed.exerciseId === exercise.exerciseId || sameExerciseName(performed.name, exercise.name)
       );
       return {
         exerciseId: exercise.exerciseId,
@@ -207,6 +224,42 @@ function AccountArea({ section }) {
     profile: 'Mi perfil', admin: 'Panel de control'
   };
 
+  const selectedExercise = exerciseCatalog.find((exercise) => exercise.id === selectedStatExercise);
+  const metricOptions = {
+    volume: { label: 'Volumen', unit: 'kg × reps' },
+    reps: { label: 'Repeticiones', unit: 'reps' },
+    maxWeight: { label: 'Peso máximo', unit: 'kg' },
+    estimatedRm: { label: '1RM estimado', unit: 'kg' }
+  };
+  const progressionData = selectedExercise ? history.slice().reverse().flatMap((session) => {
+    const recordedExercise = session.exercises?.find((exercise) =>
+      exercise.exerciseId === selectedExercise.id || sameExerciseName(exercise.name, selectedExercise.name)
+    );
+    if (!recordedExercise) return [];
+    const sets = Array.isArray(recordedExercise.sets)
+      ? recordedExercise.sets
+      : Array.from({ length: Math.max(1, Number(recordedExercise.sets) || 1) }, () => ({ reps: recordedExercise.reps, weightKg: recordedExercise.weightKg }));
+    const volume = sets.reduce((total, set) => total + (Number(set.weightKg) || 0) * (Number(set.reps ?? set.targetReps) || 0), 0);
+    const reps = sets.reduce((total, set) => total + (Number(set.reps ?? set.targetReps) || 0), 0);
+    const maxWeight = Math.max(0, ...sets.map((set) => Number(set.weightKg) || 0));
+    const estimatedRm = Math.max(0, ...sets.map((set) => {
+      const weight = Number(set.weightKg) || 0;
+      const setReps = Number(set.reps ?? set.targetReps) || 0;
+      return weight > 0 && setReps > 0 ? weight * (1 + setReps / 30) : 0;
+    }));
+    return [{
+      sessionId: session.id,
+      date: session.completedAt,
+      sessionLabel: new Date(session.completedAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }),
+      volume: Math.round(volume), reps, maxWeight, estimatedRm: Math.round(estimatedRm * 10) / 10
+    }];
+  }) : [];
+  const metric = metricOptions[selectedMetric];
+  const metricValues = progressionData.map((point) => point[selectedMetric]).filter((value) => Number.isFinite(value));
+  const bestMetricValue = metricValues.length ? Math.max(...metricValues) : 0;
+  const latestMetricValue = metricValues.at(-1) || 0;
+  const formatMetric = (value) => `${Number(value).toLocaleString('es-ES', { maximumFractionDigits: 1 })} ${metric.unit}`;
+
   return (
     <div className="account-page">
       <header className="account-heading">
@@ -278,6 +331,28 @@ function AccountArea({ section }) {
 
       {section === 'history' && <section className="account-section history-section">
         <div className="section-title-row"><div><span className="account-eyebrow">ACTIVIDAD</span><h2>Sesiones completadas</h2></div><span className="count-badge">{history.length}</span></div>
+        <section className="progress-panel">
+          <div className="progress-panel-heading"><div><span className="account-eyebrow">SOBRECARGA PROGRESIVA</span><h3>Evolución por ejercicio</h3></div></div>
+          <div className="progress-controls">
+            <label>Ejercicio<select value={selectedStatExercise} onChange={(event) => setSelectedStatExercise(event.target.value)}>
+              {exerciseCatalog.map((exercise) => <option value={exercise.id} key={exercise.id}>{exercise.name}</option>)}
+            </select></label>
+            <label>Métrica<select value={selectedMetric} onChange={(event) => setSelectedMetric(event.target.value)}>
+              {Object.entries(metricOptions).map(([key, option]) => <option value={key} key={key}>{option.label}</option>)}
+            </select></label>
+          </div>
+          {progressionData.length ? <>
+            <div className="progress-highlights">
+              <div><span>Mejor marca</span><strong>{formatMetric(bestMetricValue)}</strong></div>
+              <div><span>Último registro</span><strong>{formatMetric(latestMetricValue)}</strong></div>
+              <div><span>Sesiones con este ejercicio</span><strong>{progressionData.length}</strong></div>
+            </div>
+            <Suspense fallback={<div className="progress-chart-loading">Preparando gráfico...</div>}>
+              <ProgressChart data={progressionData} metricKey={selectedMetric} metricLabel={metric.label} formatValue={formatMetric} />
+            </Suspense>
+            {selectedMetric === 'estimatedRm' && <p className="progress-caption">Estimación Epley: peso × (1 + repeticiones / 30). Es una referencia, no un test máximo.</p>}
+          </> : <p className="empty-state">Registra este ejercicio en una sesión para empezar a ver su evolución.</p>}
+        </section>
         {history.length ? <div className="history-list">{history.map((session) => <article className="history-entry" key={session.id}>
           <div className="history-date"><strong>{new Date(session.completedAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}</strong><span>{new Date(session.completedAt).toLocaleDateString('es-ES', { year: 'numeric' })}</span></div>
           <div className="history-details"><h3>{session.routineName}</h3><p>{session.exercises.map(formatSessionExercise).join(' · ')}</p></div>
