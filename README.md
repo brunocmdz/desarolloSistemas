@@ -73,10 +73,10 @@ Variables disponibles:
 
 Instala dependencias e inicia la API:
 
-```powershell
+```git bash
 cd backEnd
 npm install
-npm run dev
+node index.js
 ```
 
 La API sincroniza los modelos con PostgreSQL y carga el catálogo inicial de ejercicios al arrancar. La primera cuenta registrada con el correo de `ADMIN_EMAIL` recibe el rol admin. Si esa cuenta ya existe, reinicia la API después de configurar la variable.
@@ -85,7 +85,7 @@ La API sincroniza los modelos con PostgreSQL y carga el catálogo inicial de eje
 
 En otra terminal, desde la raíz del proyecto:
 
-```powershell
+```git bash
 cd gainracks
 npm install
 npm run dev
