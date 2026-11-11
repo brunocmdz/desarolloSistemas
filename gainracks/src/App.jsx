@@ -59,7 +59,7 @@ function App() {
       <main className="content">
         {content}
       </main>
-      <Footer />
+      <Footer onNavigate={setView} isLoggedIn={isLoggedIn} />
     </div>
   );
 }
