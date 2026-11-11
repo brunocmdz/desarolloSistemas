@@ -82,7 +82,10 @@
 .progress-panel { border-top: 1px solid var(--account-line); padding: 20px 0 22px; margin-bottom: 20px; }
 .progress-panel-heading h3 { margin: 4px 0 0; font-size: 17px; }
 .progress-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 16px 0; }
+.progress-controls.calorie-controls { grid-template-columns: 1fr 1fr; }
 .progress-controls label { display: grid; gap: 6px; color: var(--account-muted); font-size: 11px; }
+.progress-scope { display: grid; align-content: start; gap: 6px; color: var(--account-muted); font-size: 11px; }
+.progress-scope strong { min-height: 35px; display: flex; align-items: center; padding: 0 10px; border: 1px solid #454d47; border-radius: 4px; background: var(--account-bg); color: var(--account-text); font-size: 12px; }
 .progress-controls select { width: 100%; min-width: 0; border: 1px solid #454d47; border-radius: 4px; background: var(--account-bg); color: var(--account-text); padding: 9px 10px; font: inherit; font-size: 12px; }
 .progress-highlights { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 16px 0 8px; }
 .progress-highlights > div { display: grid; gap: 5px; padding: 11px; border-left: 2px solid var(--account-accent); background: #171918; }

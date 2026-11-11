@@ -9,6 +9,8 @@ const WorkoutSession = sequelize.define('WorkoutSession', {
   routineId: { type: DataTypes.INTEGER, allowNull: true },
   routineName: { type: DataTypes.STRING(100), allowNull: false },
   durationMinutes: { type: DataTypes.INTEGER, allowNull: true },
+  bodyWeightKg: { type: DataTypes.DECIMAL(5, 2), allowNull: true },
+  estimatedCalories: { type: DataTypes.INTEGER, allowNull: true },
   notes: { type: DataTypes.STRING(500), allowNull: true },
   exercises: { type: DataTypes.JSONB, allowNull: false, defaultValue: [] },
   completedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW }

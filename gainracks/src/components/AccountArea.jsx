@@ -254,9 +254,21 @@ function AccountArea({ section, onLogout }) {
     volume: { label: 'Volumen', unit: 'kg × reps' },
     reps: { label: 'Repeticiones', unit: 'reps' },
     maxWeight: { label: 'Peso máximo', unit: 'kg' },
+    calories: { label: 'Calorías estimadas', unit: 'kcal' },
     estimatedRm: { label: '1RM estimado', unit: 'kg' }
   };
-  const progressionData = selectedExercise ? history.slice().reverse().flatMap((session) => {
+  const isCaloriesMetric = selectedMetric === 'calories';
+  const progressionData = (isCaloriesMetric || selectedExercise) ? history.slice().reverse().flatMap((session) => {
+    if (isCaloriesMetric) {
+      const calories = Number(session.estimatedCalories);
+      if (!Number.isFinite(calories) || calories <= 0) return [];
+      return [{
+        sessionId: session.id,
+        date: session.completedAt,
+        sessionLabel: new Date(session.completedAt).toLocaleString('es-ES', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }),
+        calories: Math.round(calories)
+      }];
+    }
     const recordedExercise = session.exercises?.find((exercise) =>
       exercise.exerciseId === selectedExercise.id || sameExerciseName(exercise.name, selectedExercise.name)
     );
@@ -367,10 +379,10 @@ function AccountArea({ section, onLogout }) {
         <div className="section-title-row"><div><span className="account-eyebrow">ACTIVIDAD</span><h2>Sesiones completadas</h2></div><span className="count-badge">{history.length}</span></div>
         <section className="progress-panel">
           <div className="progress-panel-heading"><div><span className="account-eyebrow">SOBRECARGA PROGRESIVA</span><h3>Evolución por ejercicio</h3></div></div>
-          <div className="progress-controls">
-            <label>Ejercicio<select value={selectedStatExercise} onChange={(event) => setSelectedStatExercise(event.target.value)}>
+          <div className={`progress-controls ${isCaloriesMetric ? 'calorie-controls' : ''}`}>
+            {isCaloriesMetric ? <div className="progress-scope"><span>Alcance</span><strong>Sesión completa</strong></div> : <label>Ejercicio<select value={selectedStatExercise} onChange={(event) => setSelectedStatExercise(event.target.value)}>
               {exerciseCatalog.map((exercise) => <option value={exercise.id} key={exercise.id}>{exercise.name}</option>)}
-            </select></label>
+            </select></label>}
             <label>Métrica<select value={selectedMetric} onChange={(event) => setSelectedMetric(event.target.value)}>
               {Object.entries(metricOptions).map(([key, option]) => <option value={key} key={key}>{option.label}</option>)}
             </select></label>
@@ -379,18 +391,19 @@ function AccountArea({ section, onLogout }) {
             <div className="progress-highlights">
               <div><span>Mejor marca</span><strong>{formatMetric(bestMetricValue)}</strong></div>
               <div><span>Último registro</span><strong>{formatMetric(latestMetricValue)}</strong></div>
-              <div><span>Sesiones con este ejercicio</span><strong>{progressionData.length}</strong></div>
+              <div><span>{isCaloriesMetric ? 'Sesiones contabilizadas' : 'Sesiones con este ejercicio'}</span><strong>{progressionData.length}</strong></div>
             </div>
             <Suspense fallback={<div className="progress-chart-loading">Preparando gráfico...</div>}>
               <ProgressChart data={progressionData} metricKey={selectedMetric} metricLabel={metric.label} formatValue={formatMetric} />
             </Suspense>
             {selectedMetric === 'estimatedRm' && <p className="progress-caption">Estimación Epley: peso × (1 + repeticiones / 30). Es una referencia, no un test máximo.</p>}
+            {isCaloriesMetric && <p className="progress-caption">Estimación para fuerza moderada (5 MET), basada en duración y peso corporal. Si no cargaste tu peso en el perfil, se asumen 70 kg.</p>}
           </> : <p className="empty-state">Registra este ejercicio en una sesión para empezar a ver su evolución.</p>}
         </section>
         {history.length ? <div className="history-list">{history.map((session) => <article className="history-entry" key={session.id}>
           <div className="history-date"><strong>{new Date(session.completedAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}</strong><span>{new Date(session.completedAt).toLocaleDateString('es-ES', { year: 'numeric' })}</span></div>
           <div className="history-details"><h3>{session.routineName}</h3><p>{session.exercises.map(formatSessionExercise).join(' · ')}</p></div>
-          <div className="history-duration">{session.durationMinutes ? `${session.durationMinutes} min` : 'Sesión'}<small>{session.exercises.length} ejercicios</small></div>
+          <div className="history-duration">{session.durationMinutes ? `${session.durationMinutes} min` : 'Sesión'}<small>{session.estimatedCalories ? `${Math.round(session.estimatedCalories)} kcal aprox.` : 'Sin estimación kcal'}</small><small>{session.exercises.length} ejercicios</small></div>
         </article>)}</div> : <p className="empty-state">Aún no hay sesiones. Registra una desde tus rutinas.</p>}
       </section>}
 

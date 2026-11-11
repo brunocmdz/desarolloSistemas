@@ -17,6 +17,7 @@ const getSessionVolume = (session) => (session.exercises || []).reduce((total, e
   const setCount = Number(exercise.sets) || 1;
   return total + setCount * (Number(exercise.weightKg) || 0) * (Number(exercise.reps) || 0);
 }, 0);
+const getSessionCalories = (session) => Number(session.estimatedCalories) || 0;
 
 const HomePrivate = ({ onNavigate }) => {
   const [dashboard, setDashboard] = useState({ routines: [], sessions: [] });
@@ -39,6 +40,7 @@ const HomePrivate = ({ onNavigate }) => {
   const weekStart = getWeekStart();
   const weekSessions = dashboard.sessions.filter((session) => new Date(session.completedAt) >= weekStart);
   const weekVolume = weekSessions.reduce((total, session) => total + getSessionVolume(session), 0);
+  const weekCalories = weekSessions.reduce((total, session) => total + getSessionCalories(session), 0);
   const recentSessions = dashboard.sessions.slice(0, 4);
   const firstName = localStorage.getItem('userName') || 'atleta';
 
@@ -53,9 +55,9 @@ const HomePrivate = ({ onNavigate }) => {
 
       <section className="dashboard-metrics" aria-label="Resumen semanal">
         <article className="dashboard-metric"><span>Sesiones esta semana</span><strong>{weekSessions.length}</strong><small>desde el lunes</small></article>
+        <article className="dashboard-metric"><span>Calorías estimadas</span><strong>{Math.round(weekCalories).toLocaleString('es-ES')} <small>kcal</small></strong><small>esta semana · aproximado</small></article>
         <article className="dashboard-metric"><span>Volumen esta semana</span><strong>{Math.round(weekVolume).toLocaleString('es-ES')} <small>kg</small></strong><small>peso × repeticiones</small></article>
         <article className="dashboard-metric"><span>Rutinas guardadas</span><strong>{dashboard.routines.length}</strong><small>listas para entrenar</small></article>
-        <article className="dashboard-metric"><span>Sesiones registradas</span><strong>{dashboard.sessions.length}</strong><small>en tu historial</small></article>
       </section>
 
       <div className="dashboard-lower-grid">
@@ -64,7 +66,7 @@ const HomePrivate = ({ onNavigate }) => {
           {recentSessions.length ? <div className="dashboard-session-list">{recentSessions.map((session) => <article className="dashboard-session" key={session.id}>
             <div className="dashboard-session-date">{new Date(session.completedAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}</div>
             <div className="dashboard-session-info"><h3>{session.routineName}</h3><p>{session.exercises.map((exercise) => exercise.name).join(' · ')}</p></div>
-            <span className="dashboard-session-volume">{Math.round(getSessionVolume(session)).toLocaleString('es-ES')} kg</span>
+            <span className="dashboard-session-volume">{Math.round(getSessionCalories(session)).toLocaleString('es-ES')} kcal</span>
           </article>)}</div> : <div className="dashboard-empty"><p>Todavía no registraste entrenamientos.</p><button className="dashboard-text-button" onClick={() => onNavigate('routines')}>Abrir mis rutinas</button></div>}
         </section>
 

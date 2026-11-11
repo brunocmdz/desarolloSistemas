@@ -2,6 +2,13 @@ const User = require('../model/user');
 const Routine = require('../model/routine');
 const WorkoutSession = require('../model/workoutSession');
 const Exercise = require('../model/exercise');
+const STRENGTH_TRAINING_MET = 5;
+const DEFAULT_BODY_WEIGHT_KG = 70;
+
+const estimateCalories = (durationMinutes, bodyWeightKg) => {
+  if (!durationMinutes || !bodyWeightKg) return null;
+  return Math.round(STRENGTH_TRAINING_MET * 3.5 * bodyWeightKg / 200 * durationMinutes);
+};
 
 const normalizeName = (name) => String(name || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
 
@@ -124,11 +131,15 @@ const completeWorkout = async (req, res) => {
     exercises.push({ exerciseId: planned.exerciseId, name: planned.name, muscle: planned.muscle, sets });
   }
 
+  const bodyWeightKg = Number(req.user.weightKg) || DEFAULT_BODY_WEIGHT_KG;
+
   const session = await WorkoutSession.create({
     userId: req.user.id_usuario,
     routineId: routine.id,
     routineName: routine.name,
     durationMinutes: duration,
+    bodyWeightKg,
+    estimatedCalories: estimateCalories(duration, bodyWeightKg),
     notes: String(notes || '').trim().slice(0, 500) || null,
     exercises
   });
@@ -141,7 +152,15 @@ const getHistory = async (req, res) => {
     order: [['completedAt', 'DESC']],
     limit: 100
   });
-  return res.json(sessions);
+  const currentBodyWeight = Number(req.user.weightKg) || DEFAULT_BODY_WEIGHT_KG;
+  return res.json(sessions.map((session) => {
+    const data = session.toJSON();
+    if (data.estimatedCalories == null && data.durationMinutes) {
+      data.bodyWeightKg = Number(data.bodyWeightKg) || currentBodyWeight;
+      data.estimatedCalories = estimateCalories(data.durationMinutes, data.bodyWeightKg);
+    }
+    return data;
+  }));
 };
 
 const getAdminDashboard = async (_req, res) => {
